@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { SignIn } from "@clerk/nextjs";
-import { LogIn, Moon, Sun } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function SignInPage() {

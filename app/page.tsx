@@ -1,10 +1,10 @@
-import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/db/drizzle";
 import { userProfileTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import HeaderComponent from "@/components/Header";
+
 export default async function Home() {
   const user = await currentUser();
 
