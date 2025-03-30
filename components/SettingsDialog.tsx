@@ -166,7 +166,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>First Name</FormLabel>
-                        <div className="flex items-center gap-0.5">
+                        <div className="flex items-center">
                           <FormControl>
                             <Input 
                               {...field} 
@@ -179,7 +179,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                             size="icon"
                             onClick={() => toggleFieldEdit("firstName")}
                           >
-                            <Pencil className="h-2 w-2" />
+                            <Pencil className="h-0.5 w-0.5" />
                           </Button>
                         </div>
                       </FormItem>
@@ -191,7 +191,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Last Name</FormLabel>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center">
                           <FormControl>
                             <Input 
                               {...field} 
@@ -204,7 +204,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                             size="icon"
                             onClick={() => toggleFieldEdit("lastName")}
                           >
-                            <Pencil className="h-2 w-2" />
+                                <Pencil className="h-0.5 w-0.5" />
                           </Button>
                         </div>
                       </FormItem>
@@ -218,7 +218,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Email</FormLabel>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center">
                         <FormControl>
                           <Input 
                             type="email" 
@@ -232,7 +232,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                           size="icon"
                           onClick={() => toggleFieldEdit("email")}
                         >
-                          <Pencil className="h-2 w-2" />
+                          <Pencil className="h-0.5 w-0.5" />
                         </Button>
                       </div>
                     </FormItem>
@@ -245,7 +245,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center">
                         <FormControl>
                           <Input 
                             type="tel" 
@@ -259,7 +259,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                           size="icon"
                           onClick={() => toggleFieldEdit("phoneNumber")}
                         >
-                          <Pencil className="h-2 w-2" />
+                          <Pencil className="h-0.5 w-0.5" />
                         </Button>
                       </div>
                     </FormItem>
