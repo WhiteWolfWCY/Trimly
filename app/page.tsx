@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/db/drizzle";
 import { userProfileTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
-
+import HeaderComponent from "@/components/Header";
 export default async function Home() {
   const user = await currentUser();
 
@@ -23,10 +23,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex flex-row items-center justify-between w-full py-4 px-8">
-        <h1 className="text-2xl font-bold">Trimly</h1>
-        <UserButton />
-      </div>
+      <HeaderComponent />
     </div>
   );
 }
