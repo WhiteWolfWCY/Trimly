@@ -3,11 +3,10 @@ import { redirect } from "next/navigation";
 import { db } from "@/db/drizzle";
 import { userProfileTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import HeaderComponent from "@/components/Header";
 
 export default async function Home() {
   const user = await currentUser();
-
+  
   if (!user) {
     redirect("/sign-in");
   }
@@ -22,8 +21,8 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <HeaderComponent />
+    <div className="flex flex-col h-screen px-8">
+      Siema
     </div>
   );
 }
