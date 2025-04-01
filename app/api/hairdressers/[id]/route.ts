@@ -9,6 +9,8 @@ import { getHairdresserServices } from '@/actions/hairdressers/hairdresser-servi
 import { z } from 'zod';
 import { dayOfWeekEnum } from '@/db/schema';
 import { HairdresserUpdateRelations } from '@/types/hairdresser';
+import { getUserRole } from '@/actions/user/role';
+import { auth } from '@clerk/nextjs/server';
 
 const availabilitySchema = z.object({
   dayOfWeek: z.enum(dayOfWeekEnum.enumValues),
@@ -31,16 +33,29 @@ interface Params {
 }
 
 export async function GET(request: NextRequest, { params }: Params) {
+
+  const { userId } = await auth();
+  const { id } = await params;
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
       return NextResponse.json(
         { error: 'Invalid hairdresser ID' },
         { status: 400 }
       );
     }
     
-    const hairdresser = await getHairdresserById(id);
+    const hairdresser = await getHairdresserById(idNumber);
     if (!hairdresser) {
       return NextResponse.json(
         { error: 'Hairdresser not found' },
@@ -48,8 +63,8 @@ export async function GET(request: NextRequest, { params }: Params) {
       );
     }
     
-    const availability = await getHairdresserAvailability(id);
-    const serviceRelations = await getHairdresserServices(id);
+    const availability = await getHairdresserAvailability(idNumber);
+    const serviceRelations = await getHairdresserServices(idNumber);
     const serviceIds = serviceRelations.map(relation => relation.serviceId);
     
     return NextResponse.json({
@@ -67,9 +82,24 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PATCH(request: NextRequest, { params }: Params) {
+
+  const { id } = await params;
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
       return NextResponse.json(
         { error: 'Invalid hairdresser ID' },
         { status: 400 }
@@ -88,7 +118,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     
     const updateData: HairdresserUpdateRelations = validation.data;
     
-    const updatedHairdresser = await updateHairdresserWithRelations(id, updateData);
+    const updatedHairdresser = await updateHairdresserWithRelations(idNumber, updateData);
     if (!updatedHairdresser) {
       return NextResponse.json(
         { error: 'Hairdresser not found' },
@@ -107,16 +137,30 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
+
+  const { id } = await params;
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
       return NextResponse.json(
         { error: 'Invalid hairdresser ID' },
         { status: 400 }
       );
     }
     
-    const deleted = await deleteHairdresser(id);
+    const deleted = await deleteHairdresser(idNumber);
     if (!deleted) {
       return NextResponse.json(
         { error: 'Hairdresser not found' },

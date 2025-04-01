@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServiceById, updateService, deleteService } from '@/actions/services/services-service';
 import { z } from 'zod';
-
+import { auth } from '@clerk/nextjs/server';
+import { getUserRole } from '@/actions/user/role';
 const serviceUpdateSchema = z.object({
   name: z.string().min(1, "Service name is required").optional(),
   price: z.string().min(1, "Price is required")
@@ -17,16 +18,30 @@ interface Params {
 }
 
 export async function GET(request: NextRequest, { params }: Params) {
+  const { userId } = await auth();
+
+  const { id } = await params;
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
       return NextResponse.json(
         { error: 'Invalid service ID' },
         { status: 400 }
       );
     }
     
-    const service = await getServiceById(id);
+    const service = await getServiceById(idNumber);
     if (!service) {
       return NextResponse.json(
         { error: 'Service not found' },
@@ -45,9 +60,19 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PATCH(request: NextRequest, { params }: Params) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
+    const { id } = await params;
+
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
       return NextResponse.json(
         { error: 'Invalid service ID' },
         { status: 400 }
@@ -64,7 +89,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       );
     }
     
-    const updatedService = await updateService(id, validation.data);
+    const updatedService = await updateService(idNumber, validation.data);
     if (!updatedService) {
       return NextResponse.json(
         { error: 'Service not found' },
@@ -83,16 +108,30 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
+    const { id } = await params;
+
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
       return NextResponse.json(
         { error: 'Invalid service ID' },
         { status: 400 }
       );
     }
     
-    const deleted = await deleteService(id);
+    const deleted = await deleteService(idNumber);
     if (!deleted) {
       return NextResponse.json(
         { error: 'Service not found' },

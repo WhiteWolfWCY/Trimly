@@ -18,7 +18,7 @@ const HeaderComponent = () => {
   const pathname = usePathname();
   const { userId } = useAuth();
   
-  const isAdminPage = pathname === "/admin";
+  const isAdminPage = pathname === "/dashboard/admin";
   
   useEffect(() => {
     const getUserRoleFunction = async () => {
@@ -52,11 +52,11 @@ const HeaderComponent = () => {
       
       {!isLoading && isAdmin && (
         isAdminPage ? (
-          <InteractiveBackButton onClick={() => router.push("/")}>
+          <InteractiveBackButton onClick={() => router.push("/dashboard/")}>
             Home
           </InteractiveBackButton>
         ) : (
-          <InteractiveHoverButton onClick={() => router.push("/admin")}>
+          <InteractiveHoverButton onClick={() => router.push("/dashboard/admin")}>
             Admin Panel
           </InteractiveHoverButton>
         )

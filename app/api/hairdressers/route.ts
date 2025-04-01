@@ -5,6 +5,8 @@ import {
 } from '@/actions/hairdressers/hairdresser-service';
 import { z } from 'zod';
 import { dayOfWeekEnum } from '@/db/schema';
+import { auth } from '@clerk/nextjs/server';
+import { getUserRole } from '@/actions/user/role';
 
 const availabilitySchema = z.object({
   dayOfWeek: z.enum(dayOfWeekEnum.enumValues),
@@ -23,6 +25,19 @@ const hairdresserSchema = z.object({
 });
 
 export async function GET() {
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const hairdressers = await getHairdressers();
     return NextResponse.json(hairdressers);
@@ -36,6 +51,18 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getUserRole(userId);
+
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const validation = hairdresserSchema.safeParse(body);
