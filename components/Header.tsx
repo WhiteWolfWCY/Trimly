@@ -5,8 +5,9 @@ import { Scissors, Settings } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
+import { InteractiveBackButton } from "@/components/magicui/interactive-back-button";
 import SettingsDialog from "@/components/SettingsDialog";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getUserRole } from "@/actions/user/role";
 
 const HeaderComponent = () => {
@@ -14,7 +15,10 @@ const HeaderComponent = () => {
   const [userRole, setUserRole] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
   const { userId } = useAuth();
+  
+  const isAdminPage = pathname === "/admin";
   
   useEffect(() => {
     const getUserRoleFunction = async () => {
@@ -45,11 +49,19 @@ const HeaderComponent = () => {
         <Scissors className="w-6 h-6 text-primary -rotate-20" />
         <h1 className="text-2xl font-bold">Trimly</h1>
       </div>
+      
       {!isLoading && isAdmin && (
-        <InteractiveHoverButton onClick={() => router.push("/admin")}>
-          Admin Panel
-        </InteractiveHoverButton>
+        isAdminPage ? (
+          <InteractiveBackButton onClick={() => router.push("/")}>
+            Home
+          </InteractiveBackButton>
+        ) : (
+          <InteractiveHoverButton onClick={() => router.push("/admin")}>
+            Admin Panel
+          </InteractiveHoverButton>
+        )
       )}
+      
       <div className="flex flex-row items-center gap-2">
         <Button variant="ghost" onClick={() => setIsSettingsOpen(true)}>
             <Settings className="w-4 h-4" />

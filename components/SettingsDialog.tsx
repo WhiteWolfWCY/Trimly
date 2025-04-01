@@ -25,19 +25,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-const profileSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileSchema>;
-
-interface SettingsDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { profileSchema, ProfileFormValues } from "@/types/user";
+import { SettingsDialogProps } from "@/types/forms";
 
 const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
   const { userId } = useAuth();

@@ -17,14 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 
-const profileSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileSchema>;
+import { profileSchema, ProfileFormValues } from "@/types/user";
 
 export default function ProfileForm() {
   const { userId } = useAuth();
