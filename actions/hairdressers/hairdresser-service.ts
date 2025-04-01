@@ -26,7 +26,6 @@ export async function getHairdresserById(id: number): Promise<Hairdresser | unde
 
 export async function createHairdresserWithRelations(data: HairdresserWithRelations): Promise<Hairdresser> {
   try {
-    // 1. Create the hairdresser
     const [hairdresser] = await db
       .insert(hairdressersTable)
       .values({
@@ -38,7 +37,6 @@ export async function createHairdresserWithRelations(data: HairdresserWithRelati
       })
       .returning();
 
-    // 2. Create availability entries
     if (data.availability.length > 0) {
       await db
         .insert(hairdresserAvailabilityTable)
@@ -54,7 +52,6 @@ export async function createHairdresserWithRelations(data: HairdresserWithRelati
         );
     }
 
-    // 3. Create service associations
     if (data.services.length > 0) {
       await db
         .insert(hairdressersServices)
@@ -71,15 +68,12 @@ export async function createHairdresserWithRelations(data: HairdresserWithRelati
     return hairdresser;
   } catch (error) {
     console.error("Error in createHairdresserWithRelations:", error);
-    // Since we don't have transactions, we might want to attempt cleanup here
-    // However, this would need additional error handling
-    throw error; // Re-throw to let the caller handle it
+    throw error;
   }
 }
 
 export async function updateHairdresserWithRelations(id: number, data: HairdresserUpdateRelations): Promise<Hairdresser | undefined> {
   try {
-    // 1. Update hairdresser data if provided
     if (data.hairdresser) {
       const updateData = {
         ...(data.hairdresser.first_name !== undefined && { first_name: data.hairdresser.first_name }),
@@ -88,8 +82,7 @@ export async function updateHairdresserWithRelations(id: number, data: Hairdress
         updated_at: new Date()
       };
 
-      // Only update if there are fields to update
-      if (Object.keys(updateData).length > 1) { // > 1 because updated_at is always there
+      if (Object.keys(updateData).length > 1) {
         await db
           .update(hairdressersTable)
           .set(updateData)
@@ -97,14 +90,11 @@ export async function updateHairdresserWithRelations(id: number, data: Hairdress
       }
     }
 
-    // 2. Update availability if provided
     if (data.availability) {
-      // Delete current availability 
       await db
         .delete(hairdresserAvailabilityTable)
         .where(eq(hairdresserAvailabilityTable.hairdresserId, id));
 
-      // Create new availability entries
       if (data.availability.length > 0) {
         await db
           .insert(hairdresserAvailabilityTable)
@@ -121,14 +111,11 @@ export async function updateHairdresserWithRelations(id: number, data: Hairdress
       }
     }
 
-    // 3. Update services if provided
     if (data.services) {
-      // Delete current services
       await db
         .delete(hairdressersServices)
         .where(eq(hairdressersServices.hairdresserId, id));
 
-      // Create new service associations
       if (data.services.length > 0) {
         await db
           .insert(hairdressersServices)
@@ -143,7 +130,6 @@ export async function updateHairdresserWithRelations(id: number, data: Hairdress
       }
     }
 
-    // Fetch the updated hairdresser
     const [hairdresser] = await db
       .select()
       .from(hairdressersTable)
@@ -159,7 +145,6 @@ export async function updateHairdresserWithRelations(id: number, data: Hairdress
 
 export async function deleteHairdresser(id: number): Promise<boolean> {
   try {
-    // Delete related data first (due to foreign key constraints)
     await db
       .delete(hairdresserAvailabilityTable)
       .where(eq(hairdresserAvailabilityTable.hairdresserId, id));
@@ -168,7 +153,6 @@ export async function deleteHairdresser(id: number): Promise<boolean> {
       .delete(hairdressersServices)
       .where(eq(hairdressersServices.hairdresserId, id));
     
-    // Now delete the hairdresser
     const result = await db
       .delete(hairdressersTable)
       .where(eq(hairdressersTable.id, id))

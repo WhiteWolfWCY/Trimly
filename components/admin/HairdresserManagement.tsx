@@ -202,18 +202,15 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
   const formatTime = (timeInput: string | Date): string => {
     if (!timeInput) return "";
     try {
-      // Handle Date objects directly
       if (timeInput instanceof Date) {
         return format(timeInput, "h:mm a");
       }
       
-      // Handle ISO strings
       if (typeof timeInput === 'string' && timeInput.includes('T')) {
         const date = new Date(timeInput);
         return format(date, "h:mm a");
       }
       
-      // Handle time strings like "09:00:00"
       if (typeof timeInput === 'string') {
         return format(new Date(`2000-01-01T${timeInput}`), "h:mm a");
       }

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import VisitsList from "@/components/dashboard/VisitsList";
 
 export default function UserVisits() {
     return (
@@ -12,7 +13,7 @@ export default function UserVisits() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                test
+                <VisitsList />
             </CardContent>
         </Card>
     )

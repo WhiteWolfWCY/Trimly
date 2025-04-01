@@ -64,7 +64,6 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
   const [isLoadingServices, setIsLoadingServices] = useState(true);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  // Fetch services
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -85,19 +84,16 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
     fetchServices();
   }, []);
 
-  // Format initial availability data
   const formatTimeValue = (value: string | Date): string => {
     if (typeof value === 'string') {
-      // Handle ISO strings or time strings
       if (value.includes('T')) {
         return format(new Date(value), "HH:mm");
       }
-      return value.substring(0, 5); // extract "HH:MM" part
+      return value.substring(0, 5);
     }
     return format(value, "HH:mm");
   };
 
-  // Prepare default values for the form
   const defaultValues: HairdresserFormValues = {
     hairdresser: {
       first_name: initialData?.hairdresser?.first_name || "",
@@ -129,7 +125,6 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
   const handleSubmit = async (data: HairdresserFormValues) => {
     setIsSubmitting(true);
     try {
-      // Convert time strings to Date objects for API
       const formattedData: FormattedHairdresserData = {
         ...data,
         availability: data.availability.map(avail => ({
@@ -147,7 +142,6 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
     }
   };
 
-  // Get selected service names for display
   const getSelectedServiceNames = () => {
     const selectedIds = form.watch("services") || [];
     return services

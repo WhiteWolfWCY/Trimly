@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { Service } from "@/types/service";
 
-// Create Zod schema for service
 const serviceSchema = z.object({
   name: z.string().min(1, "Service name is required"),
   price: z.string().min(1, "Price is required")
@@ -40,7 +39,6 @@ interface ServiceFormProps {
 export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Prepare default values for the form
   const defaultValues: ServiceFormValues = {
     name: initialData?.name || "",
     price: initialData ? 

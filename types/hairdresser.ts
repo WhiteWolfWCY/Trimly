@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Basic hairdresser types
 export type Hairdresser = {
   id: number;
   first_name: string;
@@ -18,7 +17,6 @@ export type NewHairdresser = {
   updated_at?: Date | null;
 };
 
-// Hairdresser with availability and services
 export interface HairdresserWithRelations {
   hairdresser: {
     first_name: string;
@@ -30,10 +28,9 @@ export interface HairdresserWithRelations {
     startTime: Date;
     endTime: Date;
   }[];
-  services: number[]; // service IDs
+  services: number[];
 }
 
-// For updates with all fields optional
 export interface HairdresserUpdateRelations {
   hairdresser?: {
     first_name?: string;
@@ -45,19 +42,16 @@ export interface HairdresserUpdateRelations {
     startTime: Date;
     endTime: Date;
   }[];
-  services?: number[]; // service IDs
+  services?: number[];
 }
 
-// Hairdresser details for UI
 export interface HairdresserDetails extends Hairdresser {
   availability: HairdresserAvailability[];
   serviceIds: number[];
 }
 
-// Days of the week enum type
 export type DayOfWeek = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
 
-// Availability types
 export type HairdresserAvailability = {
   id: number;
   hairdresserId: number;
@@ -77,7 +71,6 @@ export type NewHairdresserAvailability = {
   updated_at?: Date | null;
 };
 
-// Hairdresser service relation types
 export type HairdresserService = {
   id: number;
   hairdresserId: number;
@@ -93,7 +86,6 @@ export type NewHairdresserService = {
   updated_at?: Date | null;
 };
 
-// Formatted data for API requests
 export interface FormattedHairdresserData {
   hairdresser: {
     first_name: string;
@@ -108,7 +100,6 @@ export interface FormattedHairdresserData {
   services: number[];
 }
 
-// Zod schemas
 export const availabilitySchema = z.object({
   dayOfWeek: z.enum(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]),
   startTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format. Use HH:MM"),

@@ -1,6 +1,5 @@
 import { DayOfWeek, FormattedHairdresserData } from "./hairdresser";
 
-// Form props interfaces
 export interface HairdresserFormProps {
   initialData?: {
     hairdresser: {
