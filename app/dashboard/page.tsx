@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { db } from "@/db/drizzle";
 import { userProfileTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import NewVisit from "@/components/dashboard/NewVisit";
+import UserVisits from "@/components/dashboard/UserVisits";
 
 export default async function Home() {
   const user = await currentUser();
@@ -21,8 +23,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col h-screen px-8">
-      Siema
+    <div className="flex flex-col h-screen p-8 space-y-6">
+      <div className="flex items-center gap-2">
+        <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
+      </div>
+        <div className="grid direction-reverse grid-cols-1 lg:grid-cols-5 gap-4">
+            <NewVisit />
+            <UserVisits />
+        </div>
     </div>
   );
 }

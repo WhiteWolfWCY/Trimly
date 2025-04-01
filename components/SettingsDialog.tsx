@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,8 @@ import { SettingsDialogProps } from "@/types/forms";
 
 const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
   const { userId } = useAuth();
-  const [editableFields, setEditableFields] = React.useState<{
+  const [isLoading, setIsLoading] = useState(false);
+  const [editableFields, setEditableFields] = useState<{
     [key: string]: boolean;
   }>({
     firstName: false,
@@ -59,6 +60,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!userId || !isOpen) return;
+      setIsLoading(true);
 
       try {
         const response = await fetch(`/api/profile?userId=${userId}`, {
@@ -75,11 +77,14 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
               email: userProfile.email,
               phoneNumber: userProfile.phone_number || "",
             });
+            setIsLoading(false);
           } else {
+            setIsLoading(false);
             console.error("Profile data is empty");
           }
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("Error fetching profile:", error);
       }
     };
@@ -139,9 +144,13 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
 
         <div className="grid gap-4 py-2">
           <div className="space-y-2">
-
-            <Form {...form}>
-              <form
+            {isLoading ? (
+              <div className="flex justify-center items-center h-full">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              </div>
+            ) : (
+              <Form {...form}>
+                <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-3 pt-2"
               >
@@ -267,8 +276,9 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                     )}
                   </Button>
                 </DialogFooter>
-              </form>
-            </Form>
+                </form>
+              </Form>
+            )}
           </div>
         </div>
       </DialogContent>
