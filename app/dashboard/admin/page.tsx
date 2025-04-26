@@ -6,6 +6,7 @@ import { ServicesSection } from '@/components/admin/ServicesSection';
 import { getUserRole } from '@/actions/user/role';
 import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
+import { BookingsSection } from '@/components/admin/BookingsSection';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
@@ -67,9 +68,12 @@ export default async function AdminPage() {
             <CardHeader>
               <CardTitle>Bookings Management</CardTitle>
               <CardDescription>
-                Coming soon...
+                View and manage all bookings across your salon.
               </CardDescription>
             </CardHeader>
+            <CardContent>
+              <BookingsSection />
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>

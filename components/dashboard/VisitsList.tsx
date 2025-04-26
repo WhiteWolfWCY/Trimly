@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RescheduleVisitDialog } from '@/components/shared/RescheduleVisitDialog';
 
 interface VisitCardProps {
   visit: Visit;
@@ -54,6 +55,7 @@ export default function VisitsList() {
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelReason, setCancelReason] = useState<string>('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [visitToReschedule, setVisitToReschedule] = useState<Visit | null>(null);
 
   console.log("userId", userId);
 
@@ -163,6 +165,11 @@ export default function VisitsList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setVisitToReschedule(visit)}
+              >
+                Reschedule
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => {
@@ -315,6 +322,16 @@ export default function VisitsList() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <RescheduleVisitDialog
+        visit={visitToReschedule}
+        open={!!visitToReschedule}
+        onOpenChange={(open) => !open && setVisitToReschedule(null)}
+        onSuccess={async () => {
+          await fetchVisits();
+          setVisitToReschedule(null);
+        }}
+      />
     </>
   );
 }

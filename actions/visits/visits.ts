@@ -1,10 +1,11 @@
 'use server';
 
 import { db } from "@/db/drizzle";
-import { bookingsTable, servicesTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { bookingsTable, servicesTable, hairdressersServices } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
+import { getUserRole } from '@/actions/user/role';
 
 export async function getUserVisits(userId: string) {
     const visits = await db
@@ -62,6 +63,74 @@ export async function cancelVisit(visitId: number, reason?: string) {
     .set({
       status: 'cancelled',
       cancellationReason: reason || null,
+      updated_at: new Date(),
+    })
+    .where(eq(bookingsTable.id, visitId))
+    .returning();
+
+  revalidateTag('visits');
+  
+  return updatedVisit;
+}
+
+export async function rescheduleVisit(
+  visitId: number, 
+  newAppointmentDate: Date,
+  newServiceId: number,
+  newHairdresserId: number
+) {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const [visit] = await db
+    .select()
+    .from(bookingsTable)
+    .where(eq(bookingsTable.id, visitId))
+    .limit(1);
+
+  if (!visit) {
+    throw new Error("Visit not found");
+  }
+
+  const role = await getUserRole(userId);
+  
+  if (role !== 'admin' && visit.userId !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  if (visit.status === 'cancelled') {
+    throw new Error("Cannot reschedule cancelled visit");
+  }
+
+  if (new Date(newAppointmentDate) < new Date()) {
+    throw new Error("Cannot reschedule to a past date");
+  }
+
+  // Verify that the hairdresser provides the selected service
+  const [hairdresserService] = await db
+    .select()
+    .from(hairdressersServices)
+    .where(
+      and(
+        eq(hairdressersServices.hairdresserId, newHairdresserId),
+        eq(hairdressersServices.serviceId, newServiceId)
+      )
+    )
+    .limit(1);
+
+  if (!hairdresserService) {
+    throw new Error("Selected hairdresser does not provide this service");
+  }
+
+  const [updatedVisit] = await db
+    .update(bookingsTable)
+    .set({
+      appointmentDate: newAppointmentDate,
+      serviceId: newServiceId,
+      hairdresserId: newHairdresserId,
       updated_at: new Date(),
     })
     .where(eq(bookingsTable.id, visitId))
