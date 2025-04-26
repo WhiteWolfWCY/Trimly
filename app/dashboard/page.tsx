@@ -5,6 +5,10 @@ import { userProfileTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import NewVisit from "@/components/dashboard/NewVisit";
 import UserVisits from "@/components/dashboard/UserVisits";
+import { VisitsProvider } from '@/contexts/VisitsContext';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Home() {
   const user = await currentUser();
@@ -27,10 +31,12 @@ export default async function Home() {
       <div className="flex items-center gap-2">
         <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
       </div>
+      <VisitsProvider>
         <div className="grid direction-reverse grid-cols-1 lg:grid-cols-5 gap-4">
-            <NewVisit />
-            <UserVisits />
+          <NewVisit />
+          <UserVisits />
         </div>
+      </VisitsProvider>
     </div>
   );
 }

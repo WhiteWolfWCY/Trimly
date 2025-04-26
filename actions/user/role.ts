@@ -14,5 +14,9 @@ export const getUserRole = async (userId: string) => {
     .from(userProfileTable)
     .where(eq(userProfileTable.userId, userId));
 
+  if (!user.length) {
+    throw new Error("User not found");
+  }
+
   return user[0].role;
 };

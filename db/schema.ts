@@ -3,11 +3,9 @@ import { numeric, pgTable, serial, text, timestamp, pgEnum } from 'drizzle-orm/p
 export const userRoleEnum = pgEnum('user_role', ['admin', 'user']);
 
 export const bookingStatusEnum = pgEnum('booking_status', [
-  'pending',
-  'confirmed',
-  'completed',
+  'booked',
   'cancelled',
-  'rescheduled'
+  'past'
 ]);
 
 export const dayOfWeekEnum = pgEnum('day_of_week', [
@@ -80,23 +78,11 @@ export const bookingsTable = pgTable('bookings', {
   hairdresserId: serial('hairdresser_id').notNull().references(() => hairdressersTable.id),
   serviceId: serial('service_id').notNull().references(() => servicesTable.id),
   appointmentDate: timestamp('appointment_date').notNull(),
-  status: bookingStatusEnum('status').notNull().default('pending'),
+  status: bookingStatusEnum('status').notNull().default('booked'),
   notes: text('notes'),
   cancellationReason: text('cancellation_reason'),
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at')
     .notNull()
     .$onUpdate(() => new Date()),
-});
-
-export const bookingHistoryTable = pgTable('booking_history', {
-  id: serial('id').primaryKey(),
-  bookingId: serial('booking_id').notNull().references(() => bookingsTable.id),
-  previousStatus: bookingStatusEnum('previous_status').notNull(),
-  newStatus: bookingStatusEnum('new_status').notNull(),
-  previousDate: timestamp('previous_date'),
-  newDate: timestamp('new_date'),
-  changedBy: text('changed_by').notNull().references(() => userProfileTable.userId),
-  changeReason: text('change_reason'),
-  created_at: timestamp('created_at').notNull().defaultNow(),
 });

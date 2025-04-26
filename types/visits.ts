@@ -1,10 +1,15 @@
+import { Service } from './service';
+
 export type Visit = {
     id: number;
     userId: string;
     hairdresserId: number;
     serviceId: number;
+    service?: Service;
     appointmentDate: string;
-    status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'rescheduled';
+    status: 'booked' | 'cancelled' | 'past';
     notes?: string;
     cancellationReason?: string;
+    created_at: Date;
+    updated_at: Date | null;
   };

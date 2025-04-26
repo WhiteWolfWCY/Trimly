@@ -1,4 +1,4 @@
-CREATE TYPE "public"."booking_status" AS ENUM('pending', 'confirmed', 'completed', 'cancelled', 'rescheduled');--> statement-breakpoint
+CREATE TYPE "public"."booking_status" AS ENUM('booked', 'cancelled', 'past');--> statement-breakpoint
 CREATE TYPE "public"."day_of_week" AS ENUM('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');--> statement-breakpoint
 CREATE TYPE "public"."user_role" AS ENUM('admin', 'user');--> statement-breakpoint
 CREATE TABLE "booking_history" (
@@ -19,7 +19,7 @@ CREATE TABLE "bookings" (
 	"hairdresser_id" serial NOT NULL,
 	"service_id" serial NOT NULL,
 	"appointment_date" timestamp NOT NULL,
-	"status" "booking_status" DEFAULT 'pending' NOT NULL,
+	"status" "booking_status" DEFAULT 'booked' NOT NULL,
 	"notes" text,
 	"cancellation_reason" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,

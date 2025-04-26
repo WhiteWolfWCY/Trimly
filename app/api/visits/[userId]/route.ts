@@ -1,6 +1,10 @@
 import { getUserVisits } from "@/actions/visits/visits";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from 'next/cache';
+import { headers } from 'next/headers';
+
+export const dynamic = 'force-dynamic';
 
 interface Params {
     params: { userId: string };
@@ -8,19 +12,25 @@ interface Params {
   
 export async function GET(request: NextRequest, { params }: Params) {
     const { userId } = await auth();
+    const headersList = headers();
 
     if (!userId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const { userId: id } = await params;
-
-    console.log("id", id);
-
+    const { userId: id } = params;
     const visits = await getUserVisits(id);   
 
-    console.log("visits", visits);
+    const response = NextResponse.json(visits, {
+        headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            'Surrogate-Control': 'no-store'
+        }
+    });
 
-    return NextResponse.json(visits);
+    response.headers.set('Cache-Control', 'no-store');
     
+    return response;
 }

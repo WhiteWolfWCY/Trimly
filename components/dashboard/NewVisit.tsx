@@ -47,9 +47,13 @@ import { createBooking } from '@/actions/visits/bookings';
 import { BookingFormValues, bookingSchema, TimeSlot } from '@/types/booking';
 import { Service } from '@/types/service';
 import { Hairdresser } from '@/types/hairdresser';
+import { useRouter } from 'next/navigation';
+import { useVisits } from '@/contexts/VisitsContext';
 
 export default function NewVisit() {
   const { user, isLoaded } = useUser();
+  const router = useRouter();
+  const { refreshVisits } = useVisits();
   const [hairdressers, setHairdressers] = useState<(Hairdresser & { services: Service[] })[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,32 +109,35 @@ export default function NewVisit() {
     fetchHairdressers();
   }, [user, isLoaded]);
 
+  const filteredHairdressers = watchServiceId > 0
+    ? hairdressers.filter(hd =>
+        hd.services.some(s => s.id === watchServiceId)
+      )
+    : [];
+
   useEffect(() => {
     const fetchAvailableSlots = async () => {
-      if (!selectedDate || (!watchServiceId && !watchHairdresserId)) return;
-      
+      if (!selectedDate || !watchServiceId || !watchHairdresserId) return;
+
       setIsLoadingSlots(true);
-      
+
       try {
         let queryParams = `date=${format(selectedDate, 'yyyy-MM-dd')}`;
-        
         if (watchServiceId) {
           queryParams += `&serviceId=${watchServiceId}`;
         }
-        
+        if (watchHairdresserId) {
+          queryParams += `&hairdresserId=${watchHairdresserId}`;
+        }
+
         const response = await fetch(`/api/bookings/availability?${queryParams}`);
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch available slots');
         }
-        
+
         const slots = await response.json();
-        
-        const filteredSlots = watchHairdresserId > 0
-          ? slots.filter((slot: TimeSlot) => slot.hairdresserId === watchHairdresserId)
-          : slots;
-        
-        setAvailableSlots(filteredSlots);
+        setAvailableSlots(slots);
       } catch (err) {
         console.error('Error fetching available slots:', err);
       } finally {
@@ -141,18 +148,11 @@ export default function NewVisit() {
     fetchAvailableSlots();
   }, [selectedDate, watchServiceId, watchHairdresserId]);
 
-  const filteredServices = watchHairdresserId > 0
-    ? services.filter(service => {
-        const hairdresser = hairdressers.find(h => h.id === watchHairdresserId);
-        return hairdresser?.services.some(s => s.id === service.id);
-      })
-    : services;
-
   const slotsGroupedByHairdresser = availableSlots.reduce((acc, slot) => {
-    if (!acc[slot.hairdresserId]) {
-      acc[slot.hairdresserId] = [];
-    }
-    if (slot.available) {
+    if (slot.hairdresserId === watchHairdresserId && slot.available) {
+      if (!acc[slot.hairdresserId]) {
+        acc[slot.hairdresserId] = [];
+      }
       acc[slot.hairdresserId].push(slot);
     }
     return acc;
@@ -171,6 +171,8 @@ export default function NewVisit() {
         appointmentDate: data.appointmentDate,
         notes: data.notes
       });
+      
+      refreshVisits();
       
       setBookingSuccess(true);
       form.reset();
@@ -206,7 +208,7 @@ export default function NewVisit() {
           </div>
           <h3 className="text-lg font-medium mb-1">Thank you for your booking</h3>
           <p className="text-sm text-center text-muted-foreground mb-6">
-            Your booking request has been received and is pending confirmation
+            Your booking has been confirmed. See you soon!
           </p>
           <Button onClick={() => setBookingSuccess(false)}>
             Book Another Appointment
@@ -216,17 +218,25 @@ export default function NewVisit() {
     );
   }
 
-    return (
-        <Card className="col-span-3">
-            <CardHeader>
-                <CardTitle>
-                    Schedule a new visit
-                </CardTitle>
-                <CardDescription>
-                    Schedule a new visit with your favorite hairdresser
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
+  const formValues = form.getValues();
+  console.log('Form Values:', {
+    serviceId: formValues.serviceId,
+    hairdresserId: formValues.hairdresserId,
+    appointmentDate: formValues.appointmentDate,
+    isValid: form.formState.isValid
+  });
+
+  return (
+    <Card className="col-span-3">
+      <CardHeader>
+        <CardTitle>
+          Schedule a new visit
+        </CardTitle>
+        <CardDescription>
+          Schedule a new visit with your favorite hairdresser
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -242,8 +252,11 @@ export default function NewVisit() {
                     <FormItem>
                       <FormLabel>Service</FormLabel>
                       <Select
-                        disabled={services.length === 0}
-                        onValueChange={(value) => field.onChange(parseInt(value, 10))}
+                        onValueChange={(value) => {
+                          field.onChange(parseInt(value, 10));
+                          form.setValue('hairdresserId', 0);
+                          setSelectedDate(undefined);
+                        }}
                         value={field.value ? field.value.toString() : undefined}
                       >
                         <FormControl>
@@ -252,7 +265,7 @@ export default function NewVisit() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {filteredServices.map((service) => (
+                          {services.map((service) => (
                             <SelectItem key={service.id} value={service.id.toString()}>
                               {service.name} - ${parseFloat(service.price.toString()).toFixed(2)}
                             </SelectItem>
@@ -271,8 +284,11 @@ export default function NewVisit() {
                     <FormItem>
                       <FormLabel>Hairdresser</FormLabel>
                       <Select
-                        disabled={hairdressers.length === 0}
-                        onValueChange={(value) => field.onChange(parseInt(value, 10))}
+                        disabled={filteredHairdressers.length === 0}
+                        onValueChange={(value) => {
+                          field.onChange(parseInt(value, 10));
+                          setSelectedDate(undefined);
+                        }}
                         value={field.value ? field.value.toString() : undefined}
                       >
                         <FormControl>
@@ -281,7 +297,7 @@ export default function NewVisit() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {hairdressers.map((hairdresser) => (
+                          {filteredHairdressers.map((hairdresser) => (
                             <SelectItem key={hairdresser.id} value={hairdresser.id.toString()}>
                               {hairdresser.first_name} {hairdresser.last_name}
                             </SelectItem>
@@ -304,7 +320,7 @@ export default function NewVisit() {
                           <Button
                             variant="outline"
                             className="w-full justify-start text-left font-normal"
-                            disabled={!watchServiceId}
+                            disabled={!watchServiceId || !watchHairdresserId}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {selectedDate ? (
@@ -319,8 +335,10 @@ export default function NewVisit() {
                             mode="single"
                             selected={selectedDate}
                             onSelect={setSelectedDate}
-                            disabled={(date) => 
-                              isBefore(date, new Date()) && !isToday(date) || 
+                            disabled={(date) =>
+                              !watchServiceId ||
+                              !watchHairdresserId ||
+                              isBefore(date, new Date()) && !isToday(date) ||
                               isBefore(date, addDays(new Date(), -1))
                             }
                             initialFocus
@@ -338,54 +356,36 @@ export default function NewVisit() {
                         Object.keys(slotsGroupedByHairdresser).length > 0 ? (
                           <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
                             {Object.entries(slotsGroupedByHairdresser).map(([hairdresserId, slots]) => {
-                              const hairdresser = hairdressers.find(h => h.id === parseInt(hairdresserId, 10));
                               return (
-                                <div key={hairdresserId} className="space-y-2">
-                                  {!watchHairdresserId && (
-                                    <h4 className="text-sm font-medium">
-                                      {hairdresser?.first_name} {hairdresser?.last_name}
-                                    </h4>
-                                  )}
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {slots.map((slot, index) => (
-                                      <FormField
-                                        key={index}
-                                        control={form.control}
-                                        name="appointmentDate"
-                                        render={({ field }) => (
-                                          <FormItem className="flex flex-col">
-                                            <FormControl>
-                                              <Button
-                                                type="button"
-                                                variant={field.value && 
-                                                  new Date(field.value).getTime() === new Date(slot.startTime).getTime() 
-                                                  ? "default" 
-                                                  : "outline"
-                                                }
-                                                className="w-full"
-                                                onClick={() => {
-                                                  const appointmentDateTime = new Date(slot.startTime);
-                                                  console.log("Selected time:", appointmentDateTime);
-                                                  
-                                                  field.onChange(appointmentDateTime);
-                                                  
-                                                  if (!watchHairdresserId) {
-                                                    form.setValue('hairdresserId', slot.hairdresserId);
-                                                  }
-                                                  
-                                                  setTimeout(() => {
-                                                    console.log("Form values after selection:", form.getValues());
-                                                  }, 100);
-                                                }}
-                                              >
-                                                {format(new Date(slot.startTime), "h:mm a")}
-                                              </Button>
-                                            </FormControl>
-                                          </FormItem>
-                                        )}
-                                      />
-                                    ))}
-                                  </div>
+                                <div key={hairdresserId} className="grid grid-cols-2 gap-2">
+                                  {slots.map((slot, index) => (
+                                    <FormField
+                                      key={index}
+                                      control={form.control}
+                                      name="appointmentDate"
+                                      render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                          <FormControl>
+                                            <Button
+                                              type="button"
+                                              variant={field.value && 
+                                                new Date(field.value).getTime() === new Date(slot.startTime).getTime() 
+                                                ? "default" 
+                                                : "outline"
+                                              }
+                                              className="w-full"
+                                              onClick={() => {
+                                                form.setValue('appointmentDate', new Date(slot.startTime));
+                                                form.trigger();
+                                              }}
+                                            >
+                                              {format(new Date(slot.startTime), "h:mm a")}
+                                            </Button>
+                                          </FormControl>
+                                        </FormItem>
+                                      )}
+                                    />
+                                  ))}
                                 </div>
                               );
                             })}
@@ -435,16 +435,15 @@ export default function NewVisit() {
                   </div>
                   <Button 
                     type="submit" 
-                    disabled={isSubmitting || !form.getValues().appointmentDate}
+                    disabled={
+                      isSubmitting || 
+                      !form.getValues().serviceId || 
+                      !form.getValues().hairdresserId || 
+                      !form.getValues().appointmentDate
+                    }
                     onClick={() => {
                       const formValues = form.getValues();
-                      console.log("Submitting form with values:", formValues);
-                      if (!formValues.appointmentDate) {
-                        form.setError('appointmentDate', {
-                          type: 'required',
-                          message: 'Please select an appointment time'
-                        });
-                      }
+                      console.log('Submitting with values:', formValues);
                     }}
                   >
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -453,21 +452,21 @@ export default function NewVisit() {
                 </div>
               )}
 
-{form.formState.errors.root?.message && (
+              {form.formState.errors.root?.message && (
                 <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
                   {form.formState.errors.root.message}
                 </div>
               )}
 
-{form.formState.errors.appointmentDate && (
-  <p className="text-sm font-medium text-destructive mt-2">
-    {form.formState.errors.appointmentDate.message}
-  </p>
-)}
+              {form.formState.errors.appointmentDate && (
+                <p className="text-sm font-medium text-destructive mt-2">
+                  {form.formState.errors.appointmentDate.message}
+                </p>
+              )}
             </form>
           </Form>
         )}
-            </CardContent>
-        </Card>
+      </CardContent>
+    </Card>
   );
 }

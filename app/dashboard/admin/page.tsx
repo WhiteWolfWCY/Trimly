@@ -28,7 +28,7 @@ export default async function AdminPage() {
       </div>
       
       <Tabs defaultValue="hairdressers" className="w-full">
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 w-full">
           <TabsTrigger className="hover:cursor-pointer" value="hairdressers">Hairdressers</TabsTrigger>
           <TabsTrigger className="hover:cursor-pointer" value="services">Services</TabsTrigger>
           <TabsTrigger className="hover:cursor-pointer" value="bookings">Bookings</TabsTrigger>
