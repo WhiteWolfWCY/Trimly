@@ -9,6 +9,7 @@ import { InteractiveBackButton } from "@/components/magicui/interactive-back-but
 import SettingsDialog from "@/components/SettingsDialog";
 import { useRouter, usePathname } from "next/navigation";
 import { getUserRole } from "@/actions/user/role";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const HeaderComponent = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -63,6 +64,7 @@ const HeaderComponent = () => {
       )}
       
       <div className="flex flex-row items-center gap-2">
+        <ThemeToggle />
         <Button variant="ghost" onClick={() => setIsSettingsOpen(true)}>
             <Settings className="w-4 h-4" />
         </Button>

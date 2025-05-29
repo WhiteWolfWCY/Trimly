@@ -9,7 +9,8 @@ import {
   AlertCircle,
   CalendarX,
   Search,
-  MoreVertical
+  MoreVertical,
+  FileText
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -48,6 +49,7 @@ import { Label } from "@/components/ui/label";
 import { RescheduleVisitDialog } from '@/components/shared/RescheduleVisitDialog';
 import { toast } from 'sonner';
 import { Visit } from '@/types/visits';
+import { ReportDialog } from '@/components/admin/ReportDialog';
 
 type BookingStatus = 'all' | 'booked' | 'cancelled' | 'past';
 
@@ -83,6 +85,7 @@ export function BookingsSection() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [isCancelling, setIsCancelling] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const fetchBookings = useCallback(async () => {
     setIsLoading(true);
@@ -236,6 +239,14 @@ export function BookingsSection() {
             />
           </div>
           <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => setShowReportDialog(true)}
+            >
+              <FileText className="h-4 w-4" />
+              Generuj raport
+            </Button>
             <Select
               value={filters.status}
               onValueChange={(value: BookingStatus) => 
@@ -378,6 +389,11 @@ export function BookingsSection() {
           onSuccess={fetchBookings}
         />
       )}
+
+      <ReportDialog 
+        open={showReportDialog} 
+        onOpenChange={setShowReportDialog} 
+      />
     </>
   );
 } 

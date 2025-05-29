@@ -46,13 +46,13 @@ import {
 import { HairdresserFormProps } from "@/types/forms";
 
 const daysOfWeek = [
-  { value: "monday", label: "Monday" },
-  { value: "tuesday", label: "Tuesday" },
-  { value: "wednesday", label: "Wednesday" },
-  { value: "thursday", label: "Thursday" },
-  { value: "friday", label: "Friday" },
-  { value: "saturday", label: "Saturday" },
-  { value: "sunday", label: "Sunday" },
+  { value: "monday", label: "Poniedziałek" },
+  { value: "tuesday", label: "Wtorek" },
+  { value: "wednesday", label: "Środa" },
+  { value: "thursday", label: "Czwartek" },
+  { value: "friday", label: "Piątek" },
+  { value: "saturday", label: "Sobota" },
+  { value: "sunday", label: "Niedziela" },
 ];
 
 export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps) {
