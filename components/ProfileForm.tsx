@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,9 +65,9 @@ export default function ProfileForm() {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>Imię</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your first name" {...field} />
+                  <Input placeholder="Wpisz swoje imię" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -79,9 +78,9 @@ export default function ProfileForm() {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>Nazwisko</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your last name" {...field} />
+                  <Input placeholder="Wpisz swoje nazwisko" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -94,7 +93,7 @@ export default function ProfileForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="Enter your email" {...field} />
+                  <Input type="email" placeholder="Wpisz swojego emaila" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -105,9 +104,9 @@ export default function ProfileForm() {
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Numer telefonu</FormLabel>
                 <FormControl>
-                  <Input type="tel" placeholder="Enter your phone number (optional)" {...field} />
+                  <Input type="tel" placeholder="Wpisz swój numer telefonu (opcjonalnie)" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -123,10 +122,10 @@ export default function ProfileForm() {
             {form.formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating Profile...
+                Tworzenie profilu...
               </>
             ) : (
-              "Create Profile"
+              "Utwórz profil"
             )}
           </Button>
           
@@ -141,7 +140,7 @@ export default function ProfileForm() {
           
           <SignOutButton>
             <Button type="button" variant="outline" className="w-full">
-              Sign out
+              Wyloguj się
             </Button>
           </SignOutButton>
         </div>

@@ -73,6 +73,7 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddService = async (data: any) => {
     try {
       const response = await fetch("/api/services", {
@@ -93,6 +94,7 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditService = async (data: any) => {
     if (!selectedService) return;
 
@@ -160,7 +162,7 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search services..."
+            placeholder="Wyszukaj usługi..."
             className="pl-8"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -170,14 +172,14 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Service
+              Dodaj usługę
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Service</DialogTitle>
+              <DialogTitle>Dodaj nową usługę</DialogTitle>
               <DialogDescription>
-                Enter the details of the new service below.
+                Wpisz szczegóły nowej usługi poniżej.
               </DialogDescription>
             </DialogHeader>
             <ServiceForm onSubmit={handleAddService} />
@@ -193,11 +195,11 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
         ) : filteredServices.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 text-center p-4 border rounded-lg bg-muted/50">
             <Scissors className="h-8 w-8 text-muted-foreground mb-2" />
-            <h3 className="text-lg font-medium">No services found</h3>
+            <h3 className="text-lg font-medium">Nie znaleziono usług</h3>
             <p className="text-sm text-muted-foreground mt-1">
               {searchQuery
-                ? "Try adjusting your search query"
-                : "Add a service to get started"}
+                ? "Spróbuj dostosować swoje wyszukiwanie"
+                : "Dodaj usługę, aby rozpocząć"}
             </p>
           </div>
         ) : (
@@ -234,7 +236,7 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
                         }}
                       >
                         <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
+                        <span className="sr-only">Edytuj</span>
                       </Button>
                       <Button
                         variant="ghost"
@@ -245,7 +247,7 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
                         }}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
-                        <span className="sr-only">Delete</span>
+                        <span className="sr-only">Usuń</span>
                       </Button>
                     </div>
                   </div>
@@ -260,9 +262,9 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Service</DialogTitle>
+            <DialogTitle>Edytuj usługę</DialogTitle>
             <DialogDescription>
-              Update the service information below.
+              Zaktualizuj informacje o usłudze poniżej.
             </DialogDescription>
           </DialogHeader>
           {selectedService && (
@@ -278,24 +280,24 @@ export function ServiceManagement({ initialServices = [] }: ServiceManagementPro
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Czy jesteś pewny?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the service{' '}
+              To usunie usługę{' '}
               {selectedService && (
                 <span className="font-medium">
                   {selectedService.name}
                 </span>
               )}.
-              This action cannot be undone.
+              Ta akcja nie może zostać cofnięta.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteService}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Usuń
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

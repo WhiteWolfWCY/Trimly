@@ -18,14 +18,14 @@ import { Loader2 } from "lucide-react";
 import { Service } from "@/types/service";
 
 const serviceSchema = z.object({
-  name: z.string().min(1, "Service name is required"),
-  price: z.string().min(1, "Price is required")
+  name: z.string().min(1, "Nazwa usługi jest wymagana"),
+  price: z.string().min(1, "Cena jest wymagana")
     .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-      message: "Price must be a positive number",
+      message: "Cena musi być liczbą dodatnią",
     }),
-  time_required: z.string().min(1, "Time required is required")
+  time_required: z.string().min(1, "Czas trwania jest wymagany")
     .refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) > 0, {
-      message: "Time required must be a positive number (in minutes)",
+      message: "Czas trwania musi być liczbą dodatnią (w minutach)",
     }),
 });
 
@@ -73,9 +73,9 @@ export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Service Name</FormLabel>
+              <FormLabel>Nazwa usługi</FormLabel>
               <FormControl>
-                <Input placeholder="Enter service name" {...field} />
+                <Input placeholder="Wpisz nazwę usługi" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,7 +88,7 @@ export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price ($)</FormLabel>
+                <FormLabel>Cena ($)</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
@@ -108,7 +108,7 @@ export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
             name="time_required"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Duration (minutes)</FormLabel>
+                <FormLabel>Czas trwania (minuty)</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
@@ -126,7 +126,7 @@ export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
         <div className="flex justify-end pt-2">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {initialData ? "Update Service" : "Add Service"}
+            {initialData ? "Zaktualizuj usługę" : "Dodaj usługę"}
           </Button>
         </div>
       </form>

@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -37,14 +36,12 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { Service } from "@/types/service";
 import { 
   hairdresserSchema, 
   HairdresserFormValues, 
   FormattedHairdresserData, 
-  DayOfWeek 
 } from "@/types/hairdresser";
 import { HairdresserFormProps } from "@/types/forms";
 
@@ -101,6 +98,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
       phone_number: initialData?.hairdresser?.phone_number || "",
     },
     availability: initialData?.availability?.map(avail => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       dayOfWeek: avail.dayOfWeek as any,
       startTime: formatTimeValue(avail.startTime),
       endTime: formatTimeValue(avail.endTime),
@@ -153,16 +151,16 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
         <div className="space-y-3">
-          <h3 className="text-base font-medium">Personal Information</h3>
+          <h3 className="text-base font-medium">Dane osobowe</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
               name="hairdresser.first_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>Imię</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter first name" {...field} />
+                    <Input placeholder="Wpisz imię" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,9 +172,9 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
               name="hairdresser.last_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>Nazwisko</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter last name" {...field} />
+                    <Input placeholder="Wpisz nazwisko" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,9 +187,9 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
             name="hairdresser.phone_number"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number (Optional)</FormLabel>
+                <FormLabel>Numer telefonu (opcjonalnie)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter phone number" {...field} />
+                  <Input placeholder="Wpisz numer telefonu" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -201,7 +199,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-medium">Working Hours</h3>
+            <h3 className="text-base font-medium">Godziny pracy</h3>
             <Button
               type="button"
               variant="outline"
@@ -215,7 +213,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
               }
             >
               <Plus className="mr-1 h-3 w-3" />
-              Add Day
+              Dodaj dzień
             </Button>
           </div>
 
@@ -233,7 +231,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
                       >
                         <FormControl>
                           <SelectTrigger className="h-8">
-                            <SelectValue placeholder="Day" />
+                            <SelectValue placeholder="Dzień" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -306,7 +304,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
         </div>
 
         <div className="space-y-3">
-          <h3 className="text-base font-medium">Services</h3>
+          <h3 className="text-base font-medium">Usługi</h3>
           <FormField
             control={form.control}
             name="services"
@@ -329,7 +327,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
                             ))}
                           </div>
                         ) : (
-                          <span>Select services</span>
+                          <span>Wybierz usługi</span>
                         )}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -337,9 +335,9 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
                   </PopoverTrigger>
                   <PopoverContent className="w-[300px] p-0" align="start">
                     <Command>
-                      <CommandInput placeholder="Search services..." />
+                      <CommandInput placeholder="Wyszukaj usługi..." />
                       <CommandList>
-                        <CommandEmpty>No services found.</CommandEmpty>
+                        <CommandEmpty>Nie znaleziono usług.</CommandEmpty>
                         <CommandGroup>
                           {isLoadingServices ? (
                             <div className="flex justify-center py-4">
@@ -388,7 +386,7 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
         <div className="flex justify-end pt-2">
           <Button type="submit" disabled={isSubmitting || isLoadingServices}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {initialData ? "Update Hairdresser" : "Add Hairdresser"}
+            {initialData ? "Zaktualizuj fryzjera" : "Dodaj fryzjera"}
           </Button>
         </div>
       </form>

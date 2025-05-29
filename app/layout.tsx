@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import HeaderComponent from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Trimly",
-  description: "Trimly - schedule your hairdresser appointment",
+  description: "Trimly - umów się na wizytę w salonie",
 };
 
 export default function RootLayout({

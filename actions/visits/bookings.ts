@@ -8,17 +8,15 @@ import {
   hairdresserAvailabilityTable,
   hairdressersServices,
 } from "@/db/schema";
-import { eq, and, or, gte, lt, between, inArray, sql } from "drizzle-orm";
+import { eq, and, between, inArray } from "drizzle-orm";
 import { NewBooking, TimeSlot } from "@/types/booking";
 import { Hairdresser } from "@/types/hairdresser";
 import { Service } from "@/types/service";
 import { auth } from "@clerk/nextjs/server";
 import {
-  format,
   addMinutes,
   startOfDay,
   endOfDay,
-  isWithinInterval,
   parseISO,
 } from "date-fns";
 import { DayOfWeek } from "@/types/hairdresser";
@@ -89,7 +87,8 @@ export async function getHairdressersWithServices(): Promise<
 
 export async function getAvailableTimeSlots(
   date: string,
-  serviceId?: number
+  serviceId?: number,
+  hairdresserId?: number
 ): Promise<TimeSlot[]> {
   const selectedDate = parseISO(date);
   const dayOfWeek = getDayOfWeek(selectedDate);
@@ -117,6 +116,12 @@ export async function getAvailableTimeSlots(
   if (serviceId && hairdresserServiceIds.length > 0) {
     availabilities = availabilities.filter((avail) =>
       hairdresserServiceIds.includes(avail.hairdresserId)
+    );
+  }
+
+  if (hairdresserId) {
+    availabilities = availabilities.filter((avail) => 
+      avail.hairdresserId === hairdresserId
     );
   }
 
@@ -175,7 +180,7 @@ export async function getAvailableTimeSlots(
 
     const availStartTime = new Date(selectedDate);
     availStartTime.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
-
+    
     const availEndTime = new Date(selectedDate);
     availEndTime.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);
 

@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const date = searchParams.get('date');
   const serviceId = searchParams.get('serviceId');
+  const hairdresserId = searchParams.get('hairdresserId');
   
   if (!date) {
     return NextResponse.json({ error: 'Date is required' }, { status: 400 });
@@ -20,7 +21,8 @@ export async function GET(request: NextRequest) {
   try {
     const slots = await getAvailableTimeSlots(
       date, 
-      serviceId ? parseInt(serviceId, 10) : undefined
+      serviceId ? parseInt(serviceId, 10) : undefined,
+      hairdresserId ? parseInt(hairdresserId, 10) : undefined
     );
     
     return NextResponse.json(slots);

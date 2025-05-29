@@ -53,11 +53,11 @@ const HeaderComponent = () => {
       {!isLoading && isAdmin && (
         isAdminPage ? (
           <InteractiveBackButton onClick={() => router.push("/dashboard/")}>
-            Home
+            Strona główna
           </InteractiveBackButton>
         ) : (
           <InteractiveHoverButton onClick={() => router.push("/dashboard/admin")}>
-            Admin Panel
+            Panel admina
           </InteractiveHoverButton>
         )
       )}

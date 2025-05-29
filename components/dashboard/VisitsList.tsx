@@ -9,16 +9,6 @@ import { Visit } from '@/types/visits';
 import { useVisits } from '@/contexts/VisitsContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { cancelVisit } from '@/actions/visits/visits';
 import { toast } from 'sonner';
@@ -110,6 +100,7 @@ export default function VisitsList() {
     title, 
     description 
   }: { 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: any, 
     title: string, 
     description: string 
@@ -129,12 +120,12 @@ export default function VisitsList() {
     setIsCancelling(true);
     try {
       await cancelVisit(visitToCancel, cancelReason);
-      toast.success('Visit cancelled successfully');
+      toast.success('Wizyta anulowana pomyślnie');
       fetchVisits();
       setShowCancelDialog(false);
       setCancelReason('');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to cancel visit');
+        toast.error(error instanceof Error ? error.message : 'Nie udało się anulować wizyty');
     } finally {
       setIsCancelling(false);
       setVisitToCancel(null);
@@ -168,7 +159,7 @@ export default function VisitsList() {
               <DropdownMenuItem
                 onClick={() => setVisitToReschedule(visit)}
               >
-                Reschedule
+                Przesuń wizytę
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
@@ -177,7 +168,7 @@ export default function VisitsList() {
                   setShowCancelDialog(true);
                 }}
               >
-                Cancel appointment
+                Anuluj wizytę
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -201,7 +192,7 @@ export default function VisitsList() {
       </div>
       {visit.cancellationReason && (
         <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
-          <span className="font-medium">Cancellation reason:</span> {visit.cancellationReason}
+          <span className="font-medium">Powód anulacji:</span> {visit.cancellationReason}
         </div>
       )}
     </div>
@@ -219,7 +210,7 @@ export default function VisitsList() {
     return (
       <div className="flex flex-col items-center justify-center h-32 text-center p-4 border rounded-lg bg-muted/50">
         <AlertCircle className="h-8 w-8 text-destructive mb-2" />
-        <h3 className="text-lg font-medium">Failed to load visits</h3>
+        <h3 className="text-lg font-medium">Nie udało się załadować wizyt</h3>
         <p className="text-sm text-muted-foreground mt-1">{error}</p>
       </div>
     );
@@ -230,10 +221,10 @@ export default function VisitsList() {
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="upcoming">
-            Upcoming ({upcomingVisits.length})
+            Nadchodzące ({upcomingVisits.length})
           </TabsTrigger>
           <TabsTrigger value="past">
-            Past ({pastVisits.length})
+            Minione ({pastVisits.length})
           </TabsTrigger>
         </TabsList>
         
@@ -253,8 +244,8 @@ export default function VisitsList() {
           ) : (
             <EmptyState
               icon={Clock}
-              title="No upcoming visits"
-              description="Book a new appointment to see your upcoming visits here"
+              title="Nie ma nadchodzących wizyt"
+              description="Zarezerwuj nową wizytę, aby zobaczyć swoje nadchodzące wizyty"
             />
           )}
         </TabsContent>
@@ -274,8 +265,8 @@ export default function VisitsList() {
           ) : (
             <EmptyState
               icon={CalendarX}
-              title="No past visits"
-              description="Your visit history will appear here after your first appointment"
+              title="Nie ma minionych wizyt"
+              description="Historia Twoich wizyt pojawi się tutaj po pierwszej wizycie"
             />
           )}
         </TabsContent>
@@ -284,17 +275,17 @@ export default function VisitsList() {
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Appointment</DialogTitle>
+            <DialogTitle>Anuluj wizytę</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this appointment? This action cannot be undone.
+                  Czy jesteś pewny, że chcesz anulować tę wizytę? Ta akcja nie może zostać cofnięta.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="reason">Reason for cancellation (optional)</Label>
+              <Label htmlFor="reason">Powód anulacji (opcjonalnie)</Label>
               <Textarea
                 id="reason"
-                placeholder="Please provide a reason for cancellation..."
+                placeholder="Proszę podać powód anulacji..."
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
               />
@@ -309,7 +300,7 @@ export default function VisitsList() {
                 setCancelReason('');
               }}
             >
-              Keep appointment
+              Nie anuluj
             </Button>
             <Button
               variant="destructive"
@@ -317,7 +308,7 @@ export default function VisitsList() {
               disabled={isCancelling}
             >
               {isCancelling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Cancel appointment
+              Anuluj wizytę
             </Button>
           </DialogFooter>
         </DialogContent>

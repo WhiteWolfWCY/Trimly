@@ -25,22 +25,22 @@ export default async function AdminPage() {
   return (
     <div className="flex flex-col min-h-screen p-8 space-y-6">
       <div className="flex items-center gap-2">
-        <h1 className="text-4xl font-bold tracking-tight">Admin Panel</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Panel administracyjny</h1>
       </div>
       
       <Tabs defaultValue="hairdressers" className="w-full">
         <TabsList className="mb-4 w-full">
-          <TabsTrigger className="hover:cursor-pointer" value="hairdressers">Hairdressers</TabsTrigger>
-          <TabsTrigger className="hover:cursor-pointer" value="services">Services</TabsTrigger>
-          <TabsTrigger className="hover:cursor-pointer" value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="hairdressers">Fryzjerzy</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="services">Usługi</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="bookings">Rezerwacje</TabsTrigger>
         </TabsList>
         
         <TabsContent value="hairdressers">
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Manage Hairdressers</CardTitle>
+              <CardTitle>Zarządzaj fryzjerami</CardTitle>
               <CardDescription>
-                Add, edit or remove hairdressers in your salon.
+                Dodaj, edytuj lub usuń fryzjerów w twoim salonie.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -52,9 +52,9 @@ export default async function AdminPage() {
         <TabsContent value="services">
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Services Management</CardTitle>
+              <CardTitle>Zarządzaj usługami</CardTitle>
               <CardDescription>
-                Add, edit or remove services offered by your salon.
+                Dodaj, edytuj lub usuń usługi oferowane przez twój salon.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -66,9 +66,9 @@ export default async function AdminPage() {
         <TabsContent value="bookings">
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Bookings Management</CardTitle>
+              <CardTitle>Zarządzaj rezerwacjami</CardTitle>
               <CardDescription>
-                View and manage all bookings across your salon.
+                Wyświetl i zarządzaj wszystkimi rezerwacjami w twoim salonie.
               </CardDescription>
             </CardHeader>
             <CardContent>

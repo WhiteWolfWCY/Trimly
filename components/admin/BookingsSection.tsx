@@ -56,7 +56,7 @@ const EmptyState = ({
   title, 
   description 
 }: { 
-  icon: any, 
+  icon: React.ElementType, 
   title: string, 
   description: string 
 }) => (
@@ -148,14 +148,7 @@ export function BookingsSection() {
     }
   };
 
-  const handleRescheduleSuccess = async () => {
-    try {
-      await fetchBookings();
-    } finally {
-      setVisitToReschedule(null);
-    }
-  };
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderBookingCard = (booking: any) => (
     <div
       key={booking.id}
@@ -186,7 +179,7 @@ export function BookingsSection() {
               <DropdownMenuItem
                 onClick={() => setVisitToReschedule(booking)}
               >
-                Reschedule
+                Zmień datę
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
@@ -195,7 +188,7 @@ export function BookingsSection() {
                   setShowCancelDialog(true);
                 }}
               >
-                Cancel appointment
+                Anuluj rezerwację
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -203,7 +196,7 @@ export function BookingsSection() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <div className="text-sm font-medium">Customer</div>
+          <div className="text-sm font-medium">Klient</div>
           <div className="text-sm text-muted-foreground">
             {booking.user.first_name} {booking.user.last_name}
           </div>
@@ -212,7 +205,7 @@ export function BookingsSection() {
           </div>
         </div>
         <div>
-          <div className="text-sm font-medium">Service</div>
+          <div className="text-sm font-medium">Usługa</div>
           <div className="text-sm text-primary">
             {booking.service.name}
           </div>
@@ -223,7 +216,7 @@ export function BookingsSection() {
       </div>
       {booking.cancellationReason && (
         <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
-          <span className="font-medium">Cancellation reason:</span> {booking.cancellationReason}
+          <span className="font-medium">Powód anulacji:</span> {booking.cancellationReason}
         </div>
       )}
     </div>
@@ -236,7 +229,7 @@ export function BookingsSection() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by user name or email..."
+              placeholder="Wyszukaj po imieniu lub emailu..."
               value={filters.search}
               onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
               className="w-full pl-10"
@@ -250,13 +243,13 @@ export function BookingsSection() {
               }
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder="Wybierz status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="booked">Booked</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-                <SelectItem value="past">Past</SelectItem>
+                <SelectItem value="all">Wszystkie statusy</SelectItem>
+                <SelectItem value="booked">Zarezerwowane</SelectItem>
+                <SelectItem value="cancelled">Anulowane</SelectItem>
+                <SelectItem value="past">Minione</SelectItem>
               </SelectContent>
             </Select>
             <Popover>
@@ -269,7 +262,7 @@ export function BookingsSection() {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.date ? format(filters.date, 'PPP') : <span>Pick a date</span>}
+                  {filters.date ? format(filters.date, 'PPP') : <span>Wybierz datę</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -292,7 +285,7 @@ export function BookingsSection() {
                 })}
               >
                 <XCircle className="h-4 w-4" />
-                Clear filters
+                Wyczyść filtry
               </Button>
             )}
           </div>
@@ -305,21 +298,21 @@ export function BookingsSection() {
         ) : error ? (
           <EmptyState
             icon={AlertCircle}
-            title="Error loading bookings"
+            title="Błąd podczas ładowania rezerwacji"
             description={error}
           />
         ) : bookings.length === 0 ? (
           hasActiveFilters ? (
             <EmptyState
               icon={Search}
-              title="No bookings found"
-              description="Try adjusting your filters to find what you're looking for"
+              title="Nie znaleziono rezerwacji"
+              description="Spróbuj dostosować swoje filtry, aby znaleźć to, czego szukasz"
             />
           ) : (
             <EmptyState
               icon={CalendarX}
-              title="No bookings yet"
-              description="Bookings will appear here once customers start making appointments"
+              title="Brak rezerwacji"
+              description="Rezerwacje pojawią się tutaj, gdy klienci zaczną tworzyć rezerwacje"
             />
           )
         ) : (
@@ -334,17 +327,17 @@ export function BookingsSection() {
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Appointment</DialogTitle>
+            <DialogTitle>Anuluj rezerwację</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this appointment? This action cannot be undone.
+              Czy jesteś pewny, że chcesz anulować tę rezerwację? Ta akcja nie może zostać cofnięta.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="reason">Reason for cancellation</Label>
+              <Label htmlFor="reason">Powód anulacji</Label>
               <Textarea
                 id="reason"
-                placeholder="Please provide a reason for cancellation..."
+                placeholder="Podaj powód anulacji..."
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
               />
@@ -359,7 +352,7 @@ export function BookingsSection() {
                 setCancelReason('');
               }}
             >
-              Keep appointment
+              Zatrzymaj rezerwację
             </Button>
             <Button
               variant="destructive"
@@ -367,7 +360,7 @@ export function BookingsSection() {
               disabled={isCancelling}
             >
               {isCancelling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Cancel appointment
+              Anuluj rezerwację
             </Button>
           </DialogFooter>
         </DialogContent>

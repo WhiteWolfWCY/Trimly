@@ -14,7 +14,6 @@ import {
   Search,
   UserRound,
   Clock,
-  Calendar
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -234,7 +233,7 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search hairdressers..."
+            placeholder="Wyszukaj fryzjerów..."
             className="pl-8"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -244,14 +243,14 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Hairdresser
+              Dodaj fryzjera
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Add New Hairdresser</DialogTitle>
+              <DialogTitle>Dodaj nowego fryzjera</DialogTitle>
               <DialogDescription>
-                Enter the details of the new hairdresser below.
+                Wpisz szczegóły nowego fryzjera poniżej.
               </DialogDescription>
             </DialogHeader>
             <HairdresserForm onSubmit={handleAddHairdresser} />
@@ -267,11 +266,11 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
         ) : filteredHairdressers.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 text-center p-4 border rounded-lg bg-muted/50">
             <UserRound className="h-8 w-8 text-muted-foreground mb-2" />
-            <h3 className="text-lg font-medium">No hairdressers found</h3>
+            <h3 className="text-lg font-medium">Nie znaleziono fryzjerów</h3>
             <p className="text-sm text-muted-foreground mt-1">
               {searchQuery
-                ? "Try adjusting your search query"
-                : "Add a hairdresser to get started"}
+                ? "Spróbuj dostosować swoje wyszukiwanie"
+                : "Dodaj fryzjera, aby rozpocząć"}
             </p>
           </div>
         ) : (
@@ -303,7 +302,7 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
                         onClick={() => handleViewDetailsClick(hairdresser)}
                       >
                         <Clock className="h-4 w-4" />
-                        <span className="sr-only">View Details</span>
+                        <span className="sr-only">Szczegóły</span>
                       </Button>
                       <Button
                         variant="ghost"
@@ -311,18 +310,19 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
                         onClick={() => handleEditClick(hairdresser)}
                       >
                         <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
+                        <span className="sr-only">Edytuj</span>
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => {
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           setSelectedHairdresser(hairdresser as any);
                           setIsDeleteDialogOpen(true);
                         }}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
-                        <span className="sr-only">Delete</span>
+                        <span className="sr-only">Usuń</span>
                       </Button>
                     </div>
                   </div>
@@ -337,9 +337,9 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Hairdresser</DialogTitle>
+            <DialogTitle>Edytuj fryzjera</DialogTitle>
             <DialogDescription>
-              Update the hairdresser's information below.
+              Zaktualizuj informacje o fryzjerze poniżej.
             </DialogDescription>
           </DialogHeader>
           {selectedHairdresser && (
@@ -363,26 +363,26 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
       <Dialog open={isViewDetailsOpen} onOpenChange={setIsViewDetailsOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hairdresser Details</DialogTitle>
+            <DialogTitle>Szczegóły fryzjera</DialogTitle>
           </DialogHeader>
           {selectedHairdresser && !isLoadingDetails ? (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium mb-2">Personal Information</h3>
+                <h3 className="text-lg font-medium mb-2">Dane osobowe</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">Name</p>
+                    <p className="text-sm text-muted-foreground">Imię</p>
                     <p className="font-medium">{selectedHairdresser.first_name} {selectedHairdresser.last_name}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <p className="text-sm text-muted-foreground">Numer telefonu</p>
                     <p className="font-medium">{selectedHairdresser.phone_number || "—"}</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-medium mb-2">Availability</h3>
+                <h3 className="text-lg font-medium mb-2">Dostępność</h3>
                 <div className="space-y-2">
                   {selectedHairdresser.availability?.length > 0 ? (
                     selectedHairdresser.availability.map((avail) => (
@@ -394,13 +394,13 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
                       </div>
                     ))
                   ) : (
-                    <p className="text-muted-foreground">No availability set</p>
+                    <p className="text-muted-foreground">Brak dostępności</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-medium mb-2">Services</h3>
+                <h3 className="text-lg font-medium mb-2">Usługi</h3>
                 <div className="flex flex-wrap gap-2">
                   {selectedHairdresser.serviceIds?.length > 0 ? (
                     selectedHairdresser.serviceIds.map((id) => (
@@ -409,7 +409,7 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
                       </Badge>
                     ))
                   ) : (
-                    <p className="text-muted-foreground">No services assigned</p>
+                    <p className="text-muted-foreground">Brak przypisanych usług</p>
                   )}
                 </div>
               </div>
@@ -426,24 +426,24 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Czy jesteś pewny?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the hairdresser{' '}
+              To usunie fryzjera{' '}
               {selectedHairdresser && (
                 <span className="font-medium">
                   {selectedHairdresser.first_name} {selectedHairdresser.last_name}
                 </span>
               )}.
-              This action cannot be undone.
+              Ta akcja nie może zostać cofnięta.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteHairdresser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Usuń
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

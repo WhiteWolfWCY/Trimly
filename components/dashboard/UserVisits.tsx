@@ -8,10 +8,10 @@ export default function UserVisits() {
         <Card className="col-span-2">
             <CardHeader className="pb-3">
                 <CardTitle>
-                    Your visits
+                    Twoje wizyty
                 </CardTitle>
                 <CardDescription>
-                    View your upcoming and past visits
+                    Zobacz swoje nadchodzące i minione wizyty
                 </CardDescription>
             </CardHeader>
             <CardContent>

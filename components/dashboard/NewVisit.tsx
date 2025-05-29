@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format, parseISO, addDays, isToday, isBefore } from 'date-fns';
+import { format, addDays, isToday, isBefore } from 'date-fns';
 import { 
   Card, 
   CardContent, 
@@ -35,24 +35,16 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+  Textarea } from "@/components/ui/textarea";
 import { Loader2, Calendar as CalendarIcon, Check } from 'lucide-react';
 import { createBooking } from '@/actions/visits/bookings';
 import { BookingFormValues, bookingSchema, TimeSlot } from '@/types/booking';
 import { Service } from '@/types/service';
 import { Hairdresser } from '@/types/hairdresser';
-import { useRouter } from 'next/navigation';
 import { useVisits } from '@/contexts/VisitsContext';
 
 export default function NewVisit() {
   const { user, isLoaded } = useUser();
-  const router = useRouter();
   const { refreshVisits } = useVisits();
   const [hairdressers, setHairdressers] = useState<(Hairdresser & { services: Service[] })[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -91,6 +83,7 @@ export default function NewVisit() {
         const data = await response.json();
         
         const allServices = new Map<number, Service>();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.forEach((hairdresser: any) => {
           hairdresser.services.forEach((service: Service) => {
             allServices.set(service.id, service);
@@ -197,21 +190,21 @@ export default function NewVisit() {
     return (
       <Card className="col-span-3">
         <CardHeader>
-          <CardTitle>Booking Confirmed</CardTitle>
+          <CardTitle>Rezerwacja potwierdzona</CardTitle>
           <CardDescription>
-            Your appointment has been scheduled
+            Twoja rezerwacja została zarezerwowana
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-10">
           <div className="rounded-full bg-green-100 p-3 mb-4">
             <Check className="h-8 w-8 text-green-600" />
           </div>
-          <h3 className="text-lg font-medium mb-1">Thank you for your booking</h3>
+          <h3 className="text-lg font-medium mb-1">Dziękujemy za rezerwację</h3>
           <p className="text-sm text-center text-muted-foreground mb-6">
-            Your booking has been confirmed. See you soon!
+            Twoja rezerwacja została potwierdzona. Do zobaczenia!
           </p>
           <Button onClick={() => setBookingSuccess(false)}>
-            Book Another Appointment
+            Zarezerwuj kolejną wizytę
           </Button>
         </CardContent>
       </Card>
@@ -230,10 +223,10 @@ export default function NewVisit() {
     <Card className="col-span-3">
       <CardHeader>
         <CardTitle>
-          Schedule a new visit
+          Zarezerwuj nową wizytę
         </CardTitle>
         <CardDescription>
-          Schedule a new visit with your favorite hairdresser
+          Zarezerwuj nową wizytę z ulubionym fryzjerem
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -261,7 +254,7 @@ export default function NewVisit() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a service" />
+                            <SelectValue placeholder="Wybierz usługę" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -282,7 +275,7 @@ export default function NewVisit() {
                   name="hairdresserId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Hairdresser</FormLabel>
+                      <FormLabel>Fryzjer</FormLabel>
                       <Select
                         disabled={filteredHairdressers.length === 0}
                         onValueChange={(value) => {
@@ -293,7 +286,7 @@ export default function NewVisit() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a hairdresser" />
+                            <SelectValue placeholder="Wybierz fryzjera" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -312,7 +305,7 @@ export default function NewVisit() {
 
               <div className="space-y-4">
                 <div>
-                  <FormLabel>Select Date & Time</FormLabel>
+                  <FormLabel>Wybierz datę i godzinę</FormLabel>
                   <div className="grid md:grid-cols-2 gap-4 border rounded-md mt-2">
                     <div className="p-4 border-r">
                       <Popover>
@@ -326,7 +319,7 @@ export default function NewVisit() {
                             {selectedDate ? (
                               format(selectedDate, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>Wybierz datę</span>
                             )}
                           </Button>
                         </PopoverTrigger>
@@ -393,14 +386,14 @@ export default function NewVisit() {
                         ) : (
                           <div className="flex flex-col items-center justify-center h-32 text-center">
                             <p className="text-muted-foreground">
-                              No available slots found for this date
+                              Brak dostępnych terminów dla tej daty
                             </p>
                           </div>
                         )
                       ) : (
                         <div className="flex flex-col items-center justify-center h-32 text-center">
                           <p className="text-muted-foreground">
-                            Please select a date to view available time slots
+                            Proszę wybrać datę, aby zobaczyć dostępne terminy
                           </p>
                         </div>
                       )}
@@ -413,10 +406,10 @@ export default function NewVisit() {
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Notes (optional)</FormLabel>
+                      <FormLabel>Notatki (opcjonalnie)</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Any special requests or notes for your appointment"
+                          placeholder="Dowolne specjalne żądania lub notatki do Twojej wizyty"
                           className="resize-none"
                           {...field}
                         />
@@ -430,7 +423,7 @@ export default function NewVisit() {
               {watchServiceId > 0 && (
                 <div className="bg-muted/50 p-4 rounded-lg flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">Total price</p>
+                    <p className="text-sm font-medium">Suma</p>
                     <p className="text-lg font-bold">${getServicePrice(watchServiceId)}</p>
                   </div>
                   <Button 
@@ -447,7 +440,7 @@ export default function NewVisit() {
                     }}
                   >
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Book Appointment
+                    Zarezerwuj wizytę
                   </Button>
                 </div>
               )}

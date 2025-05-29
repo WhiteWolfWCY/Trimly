@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Loader2, Pencil } from "lucide-react";
 import {
   Dialog,
@@ -136,9 +135,9 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle>Ustawienia</DialogTitle>
           <DialogDescription>
-            Customize your application preferences
+            Dostosuj swoje preferencje
           </DialogDescription>
         </DialogHeader>
 
@@ -160,7 +159,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>Imię</FormLabel>
                         <div className="flex items-center">
                           <FormControl>
                             <Input 
@@ -185,7 +184,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Name</FormLabel>
+                        <FormLabel>Nazwisko</FormLabel>
                         <div className="flex items-center">
                           <FormControl>
                             <Input 
@@ -239,7 +238,7 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
                   name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>Numer telefonu</FormLabel>
                       <div className="flex items-center">
                         <FormControl>
                           <Input 
@@ -263,16 +262,16 @@ const SettingsDialog = ({ isOpen, onClose }: SettingsDialogProps) => {
 
                 <DialogFooter className="pt-4">
                   <Button variant="outline" type="button" onClick={()=>handleOpenChange(false)}>
-                    Cancel
+                    Anuluj
                   </Button>
                   <Button type="submit" disabled={form.formState.isSubmitting}>
                     {form.formState.isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
+                        Zapisuję...
                       </>
                     ) : (
-                      "Save Changes"
+                      "Zapisz zmiany"
                     )}
                   </Button>
                 </DialogFooter>

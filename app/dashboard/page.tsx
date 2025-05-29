@@ -29,7 +29,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col h-screen p-8 space-y-6">
       <div className="flex items-center gap-2">
-        <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Strona główna</h1>
       </div>
       <VisitsProvider>
         <div className="grid direction-reverse grid-cols-1 lg:grid-cols-5 gap-4">
