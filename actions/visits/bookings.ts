@@ -21,6 +21,7 @@ import {
 } from "date-fns";
 import { DayOfWeek } from "@/types/hairdresser";
 import { revalidateTag } from 'next/cache';
+import { addBookingToCalendar } from './calendar-sync';
 
 const BOOKING_STATUS_BOOKED = "booked";
 
@@ -300,6 +301,12 @@ export async function createBooking(data: NewBooking) {
       updated_at: new Date(),
     })
     .returning();
+
+  try {
+    await addBookingToCalendar(booking.id);
+  } catch (error) {
+    console.error("Failed to add booking to Google Calendar:", error);
+  }
 
   revalidateTag('visits');
   

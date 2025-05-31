@@ -7,6 +7,8 @@ import { getUserRole } from '@/actions/user/role';
 import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import { BookingsSection } from '@/components/admin/BookingsSection';
+import { CalendarSettings } from '@/components/admin/CalendarSettings';
+import { CalendarDays } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
@@ -33,6 +35,10 @@ export default async function AdminPage() {
           <TabsTrigger className="hover:cursor-pointer" value="hairdressers">Fryzjerzy</TabsTrigger>
           <TabsTrigger className="hover:cursor-pointer" value="services">Usługi</TabsTrigger>
           <TabsTrigger className="hover:cursor-pointer" value="bookings">Rezerwacje</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="calendar">
+            <CalendarDays className="w-4 h-4 mr-2" />
+            Google Calendar
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="hairdressers">
@@ -75,6 +81,12 @@ export default async function AdminPage() {
               <BookingsSection />
             </CardContent>
           </Card>
+        </TabsContent>
+        
+        <TabsContent value="calendar">
+          <div className="max-w-2xl mx-auto">
+            <CalendarSettings />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

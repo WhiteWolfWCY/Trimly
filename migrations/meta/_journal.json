@@ -15,6 +15,13 @@
       "when": 1745654091619,
       "tag": "0001_panoramic_union_jack",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748677619427,
+      "tag": "0002_sudden_proteus",
+      "breakpoints": true
     }
   ]
 }

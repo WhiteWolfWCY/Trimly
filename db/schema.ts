@@ -81,6 +81,20 @@ export const bookingsTable = pgTable('bookings', {
   status: bookingStatusEnum('status').notNull().default('booked'),
   notes: text('notes'),
   cancellationReason: text('cancellation_reason'),
+  googleCalendarEventId: text('google_calendar_event_id'),
+  created_at: timestamp('created_at').notNull().defaultNow(),
+  updated_at: timestamp('updated_at')
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export const googleCalendarCredentialsTable = pgTable('google_calendar_credentials', {
+  id: serial('id').primaryKey(),
+  access_token: text('access_token').notNull(),
+  refresh_token: text('refresh_token').notNull(),
+  scope: text('scope').notNull(),
+  token_type: text('token_type').notNull(),
+  expiry_date: timestamp('expiry_date').notNull(),
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at')
     .notNull()

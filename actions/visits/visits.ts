@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
 import { getUserRole } from '@/actions/user/role';
+import { removeBookingFromCalendar, updateBookingInCalendar } from './calendar-sync';
 
 export async function getUserVisits(userId: string) {
     const visits = await db
@@ -68,6 +69,12 @@ export async function cancelVisit(visitId: number, reason?: string) {
     .where(eq(bookingsTable.id, visitId))
     .returning();
 
+  try {
+    await removeBookingFromCalendar(visitId);
+  } catch (error) {
+    console.error("Failed to remove visit from Google Calendar:", error);
+  }
+
   revalidateTag('visits');
   
   return updatedVisit;
@@ -109,7 +116,6 @@ export async function rescheduleVisit(
     throw new Error("Cannot reschedule to a past date");
   }
 
-  // Verify that the hairdresser provides the selected service
   const [hairdresserService] = await db
     .select()
     .from(hairdressersServices)
@@ -135,6 +141,12 @@ export async function rescheduleVisit(
     })
     .where(eq(bookingsTable.id, visitId))
     .returning();
+
+  try {
+    await updateBookingInCalendar(visitId);
+  } catch (error) {
+    console.error("Failed to update visit in Google Calendar:", error);
+  }
 
   revalidateTag('visits');
   
