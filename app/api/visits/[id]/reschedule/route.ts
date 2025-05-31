@@ -8,7 +8,7 @@ import { revalidateTag } from 'next/cache';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -18,7 +18,8 @@ export async function PATCH(
     }
 
     const role = await getUserRole(userId);
-    const visitId = parseInt(params.id);
+    const { id } = await params;
+    const visitId = parseInt(id);
     
     // Get the visit first to check permissions
     const [visit] = await db

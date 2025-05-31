@@ -2,12 +2,9 @@ import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface InteractiveBackButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
-
 export const InteractiveBackButton = React.forwardRef<
   HTMLButtonElement,
-  InteractiveBackButtonProps
+  React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ children, className, ...props }, ref) => {
   return (
     <button

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, Check, Loader2, RefreshCw, X } from 'lucide-react';
+import { CalendarDays, Loader2, RefreshCw, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { isGoogleCalendarConnected, disconnectGoogleCalendar } from '@/actions/admin/google-calendar';
 import { toast } from 'sonner';

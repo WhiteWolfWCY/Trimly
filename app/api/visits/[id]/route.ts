@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 
 interface Params {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
   
 export async function GET(request: NextRequest, { params }: Params) {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const id = params.id;
+    const { id } = await params;
     const visits = await getUserVisits(id);   
 
     const response = NextResponse.json(visits, {

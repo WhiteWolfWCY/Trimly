@@ -2,7 +2,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { getUserRole } from '@/actions/user/role';
 import { saveGoogleCalendarCredentials } from '@/actions/admin/google-calendar';
-import { redirect } from 'next/navigation';
 
 export async function GET(request: NextRequest) {
   try {

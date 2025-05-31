@@ -28,12 +28,7 @@ const hairdresserUpdateSchema = z.object({
   services: z.array(z.number().positive()).optional(),
 });
 
-interface Params {
-  params: { id: string };
-}
-
-export async function GET(request: NextRequest, { params }: Params) {
-
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
   const { id } = await params;
 
@@ -81,11 +76,9 @@ export async function GET(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: Params) {
-
-  const { id } = await params;
-
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
+  const { id } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -136,11 +129,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: Params) {
-
-  const { id } = await params;
-
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
+  const { id } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

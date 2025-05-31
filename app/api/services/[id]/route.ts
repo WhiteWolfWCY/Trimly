@@ -14,12 +14,11 @@ const serviceUpdateSchema = z.object({
 });
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(request: Request, { params }: Params) {
   const { userId } = await auth();
-
   const { id } = await params;
 
   if (!userId) {
@@ -67,6 +66,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const role = await getUserRole(userId);
+
+  if(role !== 'admin'){
+    return NextResponse.json({error: "UNAUTHORIZED"}, {status: 401});
+  }
 
   try {
     const { id } = await params;
