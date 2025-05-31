@@ -24,6 +24,7 @@ export async function createService(data: NewService): Promise<Service> {
     .insert(servicesTable)
     .values({
       name: data.name,
+      description: data.description,
       price: data.price.toString(),
       time_required: data.time_required.toString(),
       created_at: new Date(),
@@ -41,6 +42,10 @@ export async function updateService(id: number, data: Partial<NewService>): Prom
   
   if (data.name !== undefined) {
     updateData.name = data.name;
+  }
+  
+  if (data.description !== undefined) {
+    updateData.description = data.description;
   }
   
   if (data.price !== undefined) {

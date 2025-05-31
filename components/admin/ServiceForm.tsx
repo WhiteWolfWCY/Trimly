@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Service } from "@/types/service";
 
 const serviceSchema = z.object({
   name: z.string().min(1, "Nazwa usługi jest wymagana"),
+  description: z.string().optional(),
   price: z.string().min(1, "Cena jest wymagana")
     .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
       message: "Cena musi być liczbą dodatnią",
@@ -41,6 +43,7 @@ export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
 
   const defaultValues: ServiceFormValues = {
     name: initialData?.name || "",
+    description: initialData?.description || "",
     price: initialData ? 
       (typeof initialData.price === 'number' ? 
        initialData.price : initialData.price) : "",
@@ -76,6 +79,24 @@ export function ServiceForm({ initialData, onSubmit }: ServiceFormProps) {
               <FormLabel>Nazwa usługi</FormLabel>
               <FormControl>
                 <Input placeholder="Wpisz nazwę usługi" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Opis usługi (opcjonalnie)</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Dodaj opis usługi..." 
+                  className="resize-none h-20"
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

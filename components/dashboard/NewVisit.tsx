@@ -36,12 +36,19 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { 
   Textarea } from "@/components/ui/textarea";
-import { Loader2, Calendar as CalendarIcon, Check } from 'lucide-react';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Loader2, Calendar as CalendarIcon, Check, Info } from 'lucide-react';
 import { createBooking } from '@/actions/visits/bookings';
 import { BookingFormValues, bookingSchema, TimeSlot } from '@/types/booking';
 import { Service } from '@/types/service';
 import { Hairdresser } from '@/types/hairdresser';
 import { useVisits } from '@/contexts/VisitsContext';
+import { cn } from '@/lib/utils';
 
 export default function NewVisit() {
   const { user, isLoaded } = useUser();
@@ -142,7 +149,7 @@ export default function NewVisit() {
   }, [selectedDate, watchServiceId, watchHairdresserId]);
 
   const slotsGroupedByHairdresser = availableSlots.reduce((acc, slot) => {
-    if (slot.hairdresserId === watchHairdresserId && slot.available) {
+    if (slot.hairdresserId === watchHairdresserId) {
       if (!acc[slot.hairdresserId]) {
         acc[slot.hairdresserId] = [];
       }
@@ -211,14 +218,6 @@ export default function NewVisit() {
     );
   }
 
-  const formValues = form.getValues();
-  console.log('Form Values:', {
-    serviceId: formValues.serviceId,
-    hairdresserId: formValues.hairdresserId,
-    appointmentDate: formValues.appointmentDate,
-    isValid: form.formState.isValid
-  });
-
   return (
     <Card className="col-span-3">
       <CardHeader>
@@ -243,28 +242,44 @@ export default function NewVisit() {
                   name="serviceId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Service</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(parseInt(value, 10));
-                          form.setValue('hairdresserId', 0);
-                          setSelectedDate(undefined);
-                        }}
-                        value={field.value ? field.value.toString() : undefined}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz usługę" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {services.map((service) => (
-                            <SelectItem key={service.id} value={service.id.toString()}>
-                              {service.name} - ${parseFloat(service.price.toString()).toFixed(2)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormLabel>Usługa</FormLabel>
+                      <div className="flex items-center space-x-1">
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(parseInt(value, 10));
+                            form.setValue('hairdresserId', 0);
+                            setSelectedDate(undefined);
+                          }}
+                          value={field.value ? field.value.toString() : undefined}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Wybierz usługę" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {services.map((service) => (
+                              <SelectItem key={service.id} value={service.id.toString()}>
+                                {service.name} - ${parseFloat(service.price.toString()).toFixed(2)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {watchServiceId > 0 && services.find(s => s.id === watchServiceId)?.description && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center justify-center h-9 w-9">
+                                  <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="max-w-xs">{services.find(s => s.id === watchServiceId)?.description}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -366,7 +381,11 @@ export default function NewVisit() {
                                                 ? "default" 
                                                 : "outline"
                                               }
-                                              className="w-full"
+                                              className={cn(
+                                                "w-full",
+                                                !slot.available && "bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/10 hover:text-red-500"
+                                              )}
+                                              disabled={!slot.available}
                                               onClick={() => {
                                                 form.setValue('appointmentDate', new Date(slot.startTime));
                                                 form.trigger();

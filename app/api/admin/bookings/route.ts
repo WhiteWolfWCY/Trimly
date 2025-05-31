@@ -63,6 +63,7 @@ export async function GET(request: Request) {
       appointmentDate: bookingsTable.appointmentDate,
       status: bookingsTable.status,
       cancellationReason: bookingsTable.cancellationReason,
+      rescheduleReason: bookingsTable.rescheduleReason,
       hairdresserId: bookingsTable.hairdresserId,
       serviceId: bookingsTable.serviceId,
       user: {

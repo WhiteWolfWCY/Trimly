@@ -22,6 +22,20 @@
       "when": 1748677619427,
       "tag": "0002_sudden_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748700685076,
+      "tag": "0003_calm_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1748701239197,
+      "tag": "0004_strange_shiver_man",
+      "breakpoints": true
     }
   ]
 }

@@ -29,6 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RescheduleVisitDialog } from '@/components/shared/RescheduleVisitDialog';
+import { getStatusTranslation } from '@/lib/utils';
 
 interface VisitCardProps {
   visit: Visit;
@@ -141,7 +142,7 @@ export default function VisitsList() {
               {format(new Date(visit.appointmentDate), 'h:mm a')}
             </div>
             <Badge className={getStatusColor(visit.status)}>
-              {visit.status.charAt(0).toUpperCase() + visit.status.slice(1)}
+              {getStatusTranslation(visit.status)}
             </Badge>
           </div>
           <div className="text-sm text-muted-foreground">
@@ -182,6 +183,9 @@ export default function VisitsList() {
           <div className="text-sm text-muted-foreground">
             ${parseFloat(visit.service?.price.toString() || '0').toFixed(2)}
           </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            <span className="font-medium">Fryzjer:</span> {visit.hairdresser?.first_name} {visit.hairdresser?.last_name}
+          </div>
         </div>
         <div className="text-sm text-muted-foreground">
           {isPast(new Date(visit.appointmentDate)) 
@@ -193,6 +197,11 @@ export default function VisitsList() {
       {visit.cancellationReason && (
         <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
           <span className="font-medium">Powód anulacji:</span> {visit.cancellationReason}
+        </div>
+      )}
+      {visit.rescheduleReason && (
+        <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
+          <span className="font-medium">Powód przesunięcia:</span> {visit.rescheduleReason}
         </div>
       )}
     </div>

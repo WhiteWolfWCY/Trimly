@@ -28,6 +28,8 @@ import { Hairdresser } from '@/types/hairdresser';
 import { toast } from 'sonner';
 import { rescheduleVisit } from '@/actions/visits/visits';
 import React from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface RescheduleVisitDialogProps {
   visit: Visit | null;
@@ -52,6 +54,7 @@ export function RescheduleVisitDialog({
   const [selectedService, setSelectedService] = useState<number | undefined>(undefined);
   const [selectedHairdresser, setSelectedHairdresser] = useState<number | undefined>(undefined);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [rescheduleReason, setRescheduleReason] = useState('');
 
   // Fetch hairdressers and set initial values
   useEffect(() => {
@@ -63,8 +66,7 @@ export function RescheduleVisitDialog({
           const data = await response.json();
           
           const allServices = new Map<number, Service>();
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data.forEach((hairdresser: any) => {
+          data.forEach((hairdresser: Hairdresser & { services: Service[] }) => {
             hairdresser.services.forEach((service: Service) => {
               allServices.set(service.id, service);
             });
@@ -110,10 +112,9 @@ export function RescheduleVisitDialog({
           const slots = await response.json();
           console.log('Received slots:', slots);
           
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const filteredSlots = slots.filter((slot: any) => 
-            slot.hairdresserId === selectedHairdresser && 
-            slot.available
+          // Filter slots only by hairdresser, not by availability
+          const filteredSlots = slots.filter((slot: TimeSlot) => 
+            slot.hairdresserId === selectedHairdresser
           );
           
           console.log('Filtered slots:', filteredSlots);
@@ -135,7 +136,7 @@ export function RescheduleVisitDialog({
     
     setIsSubmitting(true);
     try {
-      await rescheduleVisit(visit.id, selectedSlot, selectedService, selectedHairdresser);
+      await rescheduleVisit(visit.id, selectedSlot, selectedService, selectedHairdresser, rescheduleReason);
       toast.success('Wizyta przesunięta pomyślnie');
       onSuccess?.();
       onOpenChange(false);
@@ -250,7 +251,11 @@ export function RescheduleVisitDialog({
                           ? "default" 
                           : "outline"
                         }
-                        className="w-full"
+                        className={cn(
+                          "w-full",
+                          !slot.available && "bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/10 hover:text-red-500"
+                        )}
+                        disabled={!slot.available}
                         onClick={() => setSelectedSlot(new Date(slot.startTime))}
                       >
                         {format(new Date(slot.startTime), "h:mm a")}
@@ -273,6 +278,17 @@ export function RescheduleVisitDialog({
                 </div>
               </div>
             )}
+            
+            <div className="space-y-2 mt-4">
+              <Label htmlFor="rescheduleReason">Powód przesunięcia wizyty (opcjonalnie)</Label>
+              <Textarea
+                id="rescheduleReason"
+                placeholder="Podaj powód przesunięcia wizyty..."
+                value={rescheduleReason}
+                onChange={(e) => setRescheduleReason(e.target.value)}
+                className="resize-none"
+              />
+            </div>
           </div>
 
           <DialogFooter>

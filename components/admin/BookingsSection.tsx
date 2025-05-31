@@ -29,7 +29,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { cn, getStatusTranslation } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -164,7 +164,7 @@ export function BookingsSection() {
               {format(new Date(booking.appointmentDate), 'h:mm a')}
             </div>
             <Badge className={getStatusColor(booking.status)}>
-              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+              {getStatusTranslation(booking.status)}
             </Badge>
           </div>
           <div className="text-sm text-muted-foreground">
@@ -215,11 +215,19 @@ export function BookingsSection() {
           <div className="text-sm text-muted-foreground">
             ${parseFloat(booking.service.price.toString()).toFixed(2)}
           </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            <span className="font-medium">Fryzjer:</span> {booking.hairdresser.first_name} {booking.hairdresser.last_name}
+          </div>
         </div>
       </div>
       {booking.cancellationReason && (
         <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
           <span className="font-medium">Powód anulacji:</span> {booking.cancellationReason}
+        </div>
+      )}
+      {booking.rescheduleReason && (
+        <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
+          <span className="font-medium">Powód przesunięcia:</span> {booking.rescheduleReason}
         </div>
       )}
     </div>
@@ -260,7 +268,7 @@ export function BookingsSection() {
                 <SelectItem value="all">Wszystkie statusy</SelectItem>
                 <SelectItem value="booked">Zarezerwowane</SelectItem>
                 <SelectItem value="cancelled">Anulowane</SelectItem>
-                <SelectItem value="past">Minione</SelectItem>
+                <SelectItem value="past">Zakończone</SelectItem>
               </SelectContent>
             </Select>
             <Popover>

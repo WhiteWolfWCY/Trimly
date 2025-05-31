@@ -5,6 +5,7 @@ import { auth } from '@clerk/nextjs/server';
 import { getUserRole } from '@/actions/user/role';
 const serviceUpdateSchema = z.object({
   name: z.string().min(1, "Service name is required").optional(),
+  description: z.string().optional(),
   price: z.string().min(1, "Price is required")
     .transform(val => parseFloat(val))
     .optional(),

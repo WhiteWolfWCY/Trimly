@@ -44,6 +44,7 @@ export const hairdressersTable = pgTable('hairdressers', {
 export const servicesTable = pgTable('services', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
+  description: text('description'),
   price: numeric('price').notNull(),
   time_required: numeric('time_required').notNull(),
   created_at: timestamp('created_at').notNull().defaultNow(),
@@ -81,6 +82,7 @@ export const bookingsTable = pgTable('bookings', {
   status: bookingStatusEnum('status').notNull().default('booked'),
   notes: text('notes'),
   cancellationReason: text('cancellation_reason'),
+  rescheduleReason: text('reschedule_reason'),
   googleCalendarEventId: text('google_calendar_event_id'),
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at')

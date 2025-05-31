@@ -58,7 +58,7 @@ const HeaderComponent = () => {
           </InteractiveBackButton>
         ) : (
           <InteractiveHoverButton onClick={() => router.push("/dashboard/admin")}>
-            Panel admina
+            Panel kierownika
           </InteractiveHoverButton>
         )
       )}

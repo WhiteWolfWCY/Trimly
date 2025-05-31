@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/db/drizzle";
-import { bookingsTable, servicesTable, hairdressersServices } from "@/db/schema";
+import { bookingsTable, servicesTable, hairdressersServices, hairdressersTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
@@ -18,6 +18,8 @@ export async function getUserVisits(userId: string) {
             appointmentDate: bookingsTable.appointmentDate,
             status: bookingsTable.status,
             notes: bookingsTable.notes,
+            cancellationReason: bookingsTable.cancellationReason,
+            rescheduleReason: bookingsTable.rescheduleReason,
             created_at: bookingsTable.created_at,
             updated_at: bookingsTable.updated_at,
             service: {
@@ -26,9 +28,15 @@ export async function getUserVisits(userId: string) {
                 price: servicesTable.price,
                 time_required: servicesTable.time_required,
             },
+            hairdresser: {
+                id: hairdressersTable.id,
+                first_name: hairdressersTable.first_name,
+                last_name: hairdressersTable.last_name,
+            },
         })
         .from(bookingsTable)
         .leftJoin(servicesTable, eq(bookingsTable.serviceId, servicesTable.id))
+        .leftJoin(hairdressersTable, eq(bookingsTable.hairdresserId, hairdressersTable.id))
         .where(eq(bookingsTable.userId, userId));
 
     return visits;
@@ -84,7 +92,8 @@ export async function rescheduleVisit(
   visitId: number, 
   newAppointmentDate: Date,
   newServiceId: number,
-  newHairdresserId: number
+  newHairdresserId: number,
+  rescheduleReason?: string
 ) {
   const { userId } = await auth();
   
@@ -137,6 +146,7 @@ export async function rescheduleVisit(
       appointmentDate: newAppointmentDate,
       serviceId: newServiceId,
       hairdresserId: newHairdresserId,
+      rescheduleReason: rescheduleReason || null,
       updated_at: new Date(),
     })
     .where(eq(bookingsTable.id, visitId))
