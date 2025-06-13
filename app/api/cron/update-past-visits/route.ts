@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db/drizzle';
-import { bookingsTable, bookingStatusEnum } from '@/db/schema';
+import { bookingsTable } from '@/db/schema';
 import { and, lt, eq, sql } from 'drizzle-orm';
 
 export const runtime = 'nodejs';
