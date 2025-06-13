@@ -7,11 +7,10 @@ export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
   try {
-    // Verify the request is from Vercel Cron (commented out for testing)
-    // const authHeader = request.headers.get('authorization');
-    // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    //   return new NextResponse('Unauthorized', { status: 401 });
-    // }
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     // First, let's see what bookings we have that should be updated
     const pastBookings = await db
