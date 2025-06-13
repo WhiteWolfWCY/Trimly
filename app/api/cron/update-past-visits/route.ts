@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db/drizzle';
-import { bookingsTable } from '@/db/schema';
+import { bookingsTable, bookingStatusEnum } from '@/db/schema';
 import { and, lt, eq, sql } from 'drizzle-orm';
 
 export const runtime = 'nodejs';
@@ -13,7 +13,8 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    // Use SQL CURRENT_DATE for correct date comparison in DB timezone
+    // Use SQL CURRENT_TIMESTAMP to properly compare with timestamp field
+    // This will mark any booking whose appointment datetime has passed as 'past'
     const result = await db
       .update(bookingsTable)
       .set({ 
@@ -22,10 +23,12 @@ export async function GET(request: Request) {
       })
       .where(
         and(
-          eq(bookingsTable.status, 'booked'),
-          lt(bookingsTable.appointmentDate, sql`CURRENT_DATE`)
+          eq(bookingsTable.status, "booked"),
+          lt(bookingsTable.appointmentDate, sql`CURRENT_TIMESTAMP`)
         )
       );
+
+      console.log(result)
 
     return NextResponse.json({ 
       success: true, 
