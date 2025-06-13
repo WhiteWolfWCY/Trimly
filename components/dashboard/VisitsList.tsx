@@ -194,6 +194,11 @@ export default function VisitsList() {
           }
         </div>
       </div>
+      {visit.notes && (
+        <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
+          <span className="font-medium">Notatka:</span> {visit.notes}
+        </div>
+      )}
       {visit.cancellationReason && (
         <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
           <span className="font-medium">Powód anulacji:</span> {visit.cancellationReason}

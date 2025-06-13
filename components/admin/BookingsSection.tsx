@@ -171,7 +171,7 @@ export function BookingsSection() {
             {format(new Date(booking.appointmentDate), 'MMMM d, yyyy')}
           </div>
         </div>
-        {booking.status === 'booked' && (
+        {booking.status === 'booked' && booking.status !== 'past' && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm">
@@ -220,6 +220,11 @@ export function BookingsSection() {
           </div>
         </div>
       </div>
+      {booking.notes && (
+        <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
+          <span className="font-medium">Notatka:</span> {booking.notes}
+        </div>
+      )}
       {booking.cancellationReason && (
         <div className="text-sm text-muted-foreground border-t pt-2 mt-2">
           <span className="font-medium">Powód anulacji:</span> {booking.cancellationReason}

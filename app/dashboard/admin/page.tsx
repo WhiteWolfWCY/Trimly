@@ -27,7 +27,7 @@ export default async function AdminPage() {
   return (
     <div className="flex flex-col min-h-screen p-8 space-y-6">
       <div className="flex items-center gap-2">
-        <h1 className="text-4xl font-bold tracking-tight">Panel administracyjny</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Panel kierownika</h1>
       </div>
       
       <Tabs defaultValue="hairdressers" className="w-full">

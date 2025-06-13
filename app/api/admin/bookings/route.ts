@@ -81,6 +81,7 @@ export async function GET(request: Request) {
         first_name: hairdressersTable.first_name,
         last_name: hairdressersTable.last_name,
       },
+      notes: bookingsTable.notes,
     })
     .from(bookingsTable)
     .leftJoin(userProfileTable, eq(bookingsTable.userId, userProfileTable.userId))

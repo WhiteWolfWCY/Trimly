@@ -33,19 +33,36 @@ async function prepareCalendarEvent(bookingId: number): Promise<{ event: Calenda
   }
 
   const [hairdresser] = await db
-    .select()
+    .select({
+      id: hairdressersTable.id,
+      first_name: hairdressersTable.first_name,
+      last_name: hairdressersTable.last_name,
+      phone_number: hairdressersTable.phone_number,
+    })
     .from(hairdressersTable)
     .where(eq(hairdressersTable.id, booking.hairdresserId))
     .limit(1);
 
   const [service] = await db
-    .select()
+    .select({
+      id: servicesTable.id,
+      name: servicesTable.name,
+      description: servicesTable.description,
+      price: servicesTable.price,
+      time_required: servicesTable.time_required,
+    })
     .from(servicesTable)
     .where(eq(servicesTable.id, booking.serviceId))
     .limit(1);
 
   const [user] = await db
-    .select()
+    .select({
+      userId: userProfileTable.userId,
+      first_name: userProfileTable.first_name,
+      last_name: userProfileTable.last_name,
+      email: userProfileTable.email,
+      phone_number: userProfileTable.phone_number,
+    })
     .from(userProfileTable)
     .where(eq(userProfileTable.userId, booking.userId))
     .limit(1);
@@ -57,9 +74,49 @@ async function prepareCalendarEvent(bookingId: number): Promise<{ event: Calenda
   const serviceDuration = parseInt(service.time_required.toString(), 10);
   const endTime = addMinutes(booking.appointmentDate, serviceDuration);
 
+  // Build comprehensive description in Polish
+  const descriptionParts = [
+    `📋 SZCZEGÓŁY REZERWACJI`,
+    `ID Rezerwacji: #${booking.id}`,
+    `Status: ${booking.status.toUpperCase()}`,
+    ``,
+    `💇 INFORMACJE O USŁUDZE`,
+    `Usługa: ${service.name}`,
+    `Czas trwania: ${serviceDuration} minut`,
+    `Cena: ${service.price} zł`,
+    ...(service.description ? [`Opis: ${service.description}`] : []),
+    ``,
+    `👤 DANE KLIENTA`,
+    `Imię i nazwisko: ${user.first_name} ${user.last_name}`,
+    `Email: ${user.email}`,
+    ...(user.phone_number ? [`Telefon: ${user.phone_number}`] : []),
+    ``,
+    `✂️ DANE FRYZJERA`,
+    `Imię i nazwisko: ${hairdresser.first_name} ${hairdresser.last_name}`,
+    ...(hairdresser.phone_number ? [`Telefon: ${hairdresser.phone_number}`] : []),
+    ``,
+    ...(booking.notes ? [
+      `📝 NOTATKI`,
+      booking.notes,
+      ``
+    ] : []),
+    `🕐 CZAS WIZYTY`,
+    `Początek: ${booking.appointmentDate.toLocaleString('pl-PL', { 
+      timeZone: 'Europe/Warsaw',
+      dateStyle: 'full',
+      timeStyle: 'short'
+    })}`,
+    `Koniec: ${endTime.toLocaleString('pl-PL', { 
+      timeZone: 'Europe/Warsaw',
+      dateStyle: 'full',
+      timeStyle: 'short'
+    })}`,
+    `Strefa czasowa: Europe/Warsaw`
+  ];
+
   const event: CalendarEvent = {
     summary: `${service.name} - ${user.first_name} ${user.last_name}`,
-    description: `Booking: #${booking.id}\nService: ${service.name}\nHairdresser: ${hairdresser.first_name} ${hairdresser.last_name}\nClient: ${user.first_name} ${user.last_name}\n${booking.notes ? `Notes: ${booking.notes}` : ''}`,
+    description: descriptionParts.join('\n'),
     start: {
       dateTime: booking.appointmentDate.toISOString(),
       timeZone: 'Europe/Warsaw', 
