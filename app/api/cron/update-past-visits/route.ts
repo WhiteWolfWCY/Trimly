@@ -5,12 +5,12 @@ import { and, lt, eq, sql } from 'drizzle-orm';
 
 export const runtime = 'nodejs';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
+    // const authHeader = request.headers.get('authorization');
+    // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    //   return new NextResponse('Unauthorized', { status: 401 });
+    // }
 
     // First, let's see what bookings we have that should be updated
     const pastBookings = await db
