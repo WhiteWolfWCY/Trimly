@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db/drizzle';
 import { bookingsTable } from '@/db/schema';
-import { and, lt, eq } from 'drizzle-orm';
+import { and, lt, eq, sql } from 'drizzle-orm';
 
 export const runtime = 'nodejs';
 
@@ -13,10 +13,7 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Update all booked visits that are before today to 'past' status
+    // Use SQL CURRENT_DATE for correct date comparison in DB timezone
     const result = await db
       .update(bookingsTable)
       .set({ 
@@ -26,7 +23,7 @@ export async function GET(request: Request) {
       .where(
         and(
           eq(bookingsTable.status, 'booked'),
-          lt(bookingsTable.appointmentDate, today)
+          lt(bookingsTable.appointmentDate, sql`CURRENT_DATE`)
         )
       );
 
