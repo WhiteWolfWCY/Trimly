@@ -1,0 +1,66 @@
+# Trimly - System rezerwacji wizyt dla salonu fryzjerskiego
+
+## Architektura projektu
+
+Trimly to pełnowartościowa aplikacja webowa zaprojektowana dla salonów fryzjerskich, umożliwiająca klientom rezerwację wizyt online oraz ich automatyczną synchronizację z kalendarzem Google. Aplikacja została zbudowana przy użyciu następujących technologii:
+
+- **Next.js** - framework React do budowy interfejsu użytkownika
+- **TypeScript** - język programowania zapewniający typowanie statyczne
+- **Drizzle ORM** - system mapowania obiektowo-relacyjnego
+- **PostgreSQL** - baza danych relacyjna
+- **Clerk** - system uwierzytelniania i zarządzania użytkownikami
+- **Shadcn/ui** - biblioteka komponentów UI
+- **React Hook Form** - zarządzanie formularzami
+- **Zod** - walidacja danych
+- **Google Calendar API** - integracja z kalendarzem Google
+
+## Baza danych
+
+Aplikacja korzysta z bazy danych PostgreSQL hostowanej na platformie Neon Tech. Połączenie z bazą danych odbywa się poprzez zmienną środowiskową `DATABASE_URL`, która zawiera URL połączenia z bazą danych.
+
+### Drizzle ORM
+
+Do interakcji z bazą danych używamy Drizzle ORM, co pozwala na typowane zapytania SQL i zapewnia bezpieczeństwo typów na poziomie bazy danych. Schemat bazy danych jest zdefiniowany w katalogu `/db/schema.ts`.
+
+Po postawieniu nowej bazy danych, tabele można utworzyć przy użyciu następujących komend:
+
+```bash
+# Instalacja zależności
+pnpm install
+
+# Generowanie migracji
+pnpm drizzle-kit generate
+
+# Uruchomienie migracji
+pnpm migrate
+```
+
+## Integracja z Google Calendar
+
+Aplikacja integruje się z Google Calendar API, co pozwala na automatyczne dodawanie, aktualizowanie i usuwanie wizyt w kalendarzu Google. Integracja ta wymaga konfiguracji projektu w Google Cloud Platform i uzyskania odpowiednich kluczy API. 
+
+Proces integracji działa następująco:
+1. Użytkownik (salon) uwierzytelnia aplikację do dostępu do swojego kalendarza Google
+2. Przy każdej nowej rezerwacji, aplikacja automatycznie tworzy wydarzenie w kalendarzu Google
+3. Przy zmianie lub anulowaniu wizyty, odpowiednie wydarzenie w kalendarzu jest aktualizowane lub usuwane
+
+Dane uwierzytelniające do Google Calendar API są przechowywane w bazie danych w tabeli `google_calendar_credentials`.
+
+## Hosting i wdrażanie
+
+Aplikacja jest hostowana na platformie Vercel, która specjalizuje się w hostingu aplikacji Next.js. Vercel zapewnia automatyczne wdrażanie, globalną sieć CDN i optymalizację wydajności.
+
+Repozytorium GitHub aplikacji jest połączone z Vercel, co oznacza, że każdy push do gałęzi `main` automatycznie uruchamia proces budowy i wdrażania nowej wersji aplikacji. Dzięki temu proces wdrażania jest w pełni zautomatyzowany.
+
+- GitHub: [https://github.com/WhiteWolfWCY/Trimly](https://github.com/WhiteWolfWCY/Trimly)
+- Aplikacja: [https://trimly-dusky.vercel.app/](https://trimly-dusky.vercel.app/)
+
+## Inne ważne rozwiązania techniczne
+
+- **Server Actions** - zastosowane do wykonywania operacji na serwerze bez konieczności tworzenia API endpoints
+- **Middleware** - używane do uwierzytelniania i autoryzacji użytkowników
+- **API Routes** - endpointy API dla operacji dynamicznych
+- **Responsywny design** - aplikacja jest w pełni responsywna i działa na urządzeniach mobilnych
+- **Walidacja formularzy** - wykorzystanie Zod do walidacji danych wejściowych
+- **Optymalizacja wydajności** - wykorzystanie mechanizmów Next.js do optymalizacji ładowania strony
+- **Typowanie** - pełne typowanie TypeScript dla wszystkich komponentów i funkcji

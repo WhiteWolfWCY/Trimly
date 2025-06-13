@@ -31,7 +31,9 @@ const HeaderComponent = () => {
       try {
         const role = await getUserRole(userId);
         console.log("User role:", role);
-        setUserRole(role);
+        if(role) {  
+          setUserRole(role);
+        }
       } catch (error) {
         console.error("Error fetching user role:", error);
       } finally {
