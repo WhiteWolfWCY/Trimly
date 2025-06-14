@@ -26,24 +26,54 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status');
-  const date = searchParams.get('date');
+  const statuses = searchParams.getAll('status');
+  const dateFrom = searchParams.get('dateFrom');
+  const dateTo = searchParams.get('dateTo');
   const search = searchParams.get('search');
+  const hairdresserIds = searchParams.getAll('hairdresserId');
 
   const conditions = [];
 
-  if (status && status !== 'all' && 
-      (status === 'booked' || status === 'cancelled' || status === 'past')) {
-    conditions.push(eq(bookingsTable.status, status as typeof bookingStatusEnum.enumValues[number]));
+  if (statuses.length > 0) {
+    const validStatuses = statuses.filter(status => 
+      status === 'booked' || status === 'cancelled' || status === 'past'
+    );
+    if (validStatuses.length > 0) {
+      conditions.push(
+        or(...validStatuses.map(status => 
+          eq(bookingsTable.status, status as typeof bookingStatusEnum.enumValues[number])
+        ))
+      );
+    }
   }
 
-  if (date) {
-    const searchDate = parseISO(date);
+  if (hairdresserIds.length > 0) {
+    const validIds = hairdresserIds.map(id => parseInt(id)).filter(id => !isNaN(id));
+    if (validIds.length > 0) {
+      conditions.push(
+        or(...validIds.map(id => eq(bookingsTable.hairdresserId, id)))
+      );
+    }
+  }
+
+  if (dateFrom && dateTo) {
+    const startDate = parseISO(dateFrom);
+    const endDate = parseISO(dateTo);
     conditions.push(
       and(
-        sql`${bookingsTable.appointmentDate} >= ${startOfDay(searchDate)}`,
-        sql`${bookingsTable.appointmentDate} <= ${endOfDay(searchDate)}`
+        sql`${bookingsTable.appointmentDate} >= ${startOfDay(startDate)}`,
+        sql`${bookingsTable.appointmentDate} <= ${endOfDay(endDate)}`
       )
+    );
+  } else if (dateFrom) {
+    const startDate = parseISO(dateFrom);
+    conditions.push(
+      sql`${bookingsTable.appointmentDate} >= ${startOfDay(startDate)}`
+    );
+  } else if (dateTo) {
+    const endDate = parseISO(dateTo);
+    conditions.push(
+      sql`${bookingsTable.appointmentDate} <= ${endOfDay(endDate)}`
     );
   }
 

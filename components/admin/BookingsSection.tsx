@@ -14,12 +14,15 @@ import {
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -50,8 +53,21 @@ import { RescheduleVisitDialog } from '@/components/shared/RescheduleVisitDialog
 import { toast } from 'sonner';
 import { Visit } from '@/types/visits';
 import { ReportDialog } from '@/components/admin/ReportDialog';
+import { DateRange } from 'react-day-picker';
 
-type BookingStatus = 'all' | 'booked' | 'cancelled' | 'past';
+type BookingStatus = 'booked' | 'cancelled' | 'past';
+
+interface Hairdresser {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
+
+const statusOptions: { value: BookingStatus; label: string }[] = [
+  { value: 'booked', label: 'Zarezerwowane' },
+  { value: 'cancelled', label: 'Anulowane' },
+  { value: 'past', label: 'Zakończone' },
+];
 
 const EmptyState = ({ 
   icon: Icon, 
@@ -75,10 +91,12 @@ export function BookingsSection() {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hairdressers, setHairdressers] = useState<Hairdresser[]>([]);
   const [filters, setFilters] = useState({
-    status: 'all' as BookingStatus,
-    date: undefined as Date | undefined,
+    statuses: [] as BookingStatus[],
+    dateRange: undefined as DateRange | undefined,
     search: '',
+    hairdresserIds: [] as number[],
   });
   const [visitToCancel, setVisitToCancel] = useState<number | null>(null);
   const [visitToReschedule, setVisitToReschedule] = useState<Visit | null>(null);
@@ -86,13 +104,32 @@ export function BookingsSection() {
   const [cancelReason, setCancelReason] = useState('');
   const [isCancelling, setIsCancelling] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
+  const [hairdresserPopoverOpen, setHairdresserPopoverOpen] = useState(false);
+
+  const fetchHairdressers = useCallback(async () => {
+    try {
+      const response = await fetch('/api/hairdressers');
+      if (!response.ok) throw new Error('Failed to fetch hairdressers');
+      const data = await response.json();
+      setHairdressers(data);
+    } catch (error) {
+      console.error('Error fetching hairdressers:', error);
+    }
+  }, []);
 
   const fetchBookings = useCallback(async () => {
     setIsLoading(true);
     try {
       const queryParams = new URLSearchParams();
-      if (filters.status !== 'all') queryParams.append('status', filters.status);
-      if (filters.date) queryParams.append('date', format(filters.date, 'yyyy-MM-dd'));
+      if (filters.statuses.length > 0) {
+        filters.statuses.forEach(status => queryParams.append('status', status));
+      }
+      if (filters.hairdresserIds.length > 0) {
+        filters.hairdresserIds.forEach(id => queryParams.append('hairdresserId', id.toString()));
+      }
+      if (filters.dateRange?.from) queryParams.append('dateFrom', format(filters.dateRange.from, 'yyyy-MM-dd'));
+      if (filters.dateRange?.to) queryParams.append('dateTo', format(filters.dateRange.to, 'yyyy-MM-dd'));
       if (filters.search) queryParams.append('search', filters.search);
 
       const response = await fetch(`/api/admin/bookings?${queryParams}`);
@@ -109,6 +146,10 @@ export function BookingsSection() {
   }, [filters]);
 
   useEffect(() => {
+    fetchHairdressers();
+  }, [fetchHairdressers]);
+
+  useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
 
@@ -121,7 +162,7 @@ export function BookingsSection() {
     }
   };
 
-  const hasActiveFilters = filters.status !== 'all' || filters.date || filters.search;
+  const hasActiveFilters = filters.statuses.length > 0 || filters.dateRange || filters.search || filters.hairdresserIds.length > 0;
 
   const handleCancelVisit = async () => {
     if (!visitToCancel) return;
@@ -260,41 +301,154 @@ export function BookingsSection() {
               <FileText className="h-4 w-4" />
               Generuj raport
             </Button>
-            <Select
-              value={filters.status}
-              onValueChange={(value: BookingStatus) => 
-                setFilters(prev => ({ ...prev, status: value }))
-              }
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Wybierz status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszystkie statusy</SelectItem>
-                <SelectItem value="booked">Zarezerwowane</SelectItem>
-                <SelectItem value="cancelled">Anulowane</SelectItem>
-                <SelectItem value="past">Zakończone</SelectItem>
-              </SelectContent>
-            </Select>
+            <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "w-[180px] justify-between h-auto min-h-[40px] items-center text-left font-normal",
+                    !filters.statuses.length && "text-muted-foreground"
+                  )}
+                >
+                  {filters.statuses.length ? (
+                    <div className="flex flex-wrap gap-1">
+                      {filters.statuses.map(status => {
+                        const statusOption = statusOptions.find(opt => opt.value === status);
+                        return (
+                          <Badge key={status} variant="secondary">
+                            {statusOption?.label}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span>Wybierz statusy</span>
+                  )}
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Wyszukaj statusy..." />
+                  <CommandList>
+                    <CommandEmpty>Nie znaleziono statusów.</CommandEmpty>
+                    <CommandGroup>
+                      {statusOptions.map((option) => {
+                        const isSelected = filters.statuses.includes(option.value);
+                        return (
+                          <CommandItem
+                            key={option.value}
+                            onSelect={() => {
+                              const updatedStatuses = isSelected
+                                ? filters.statuses.filter(s => s !== option.value)
+                                : [...filters.statuses, option.value as BookingStatus];
+                              
+                              setFilters(prev => ({ ...prev, statuses: updatedStatuses }));
+                            }}
+                          >
+                            <div className="flex items-center gap-2 w-full">
+                              <Checkbox checked={isSelected} />
+                              <span>{option.label}</span>
+                            </div>
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <Popover open={hairdresserPopoverOpen} onOpenChange={setHairdresserPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "w-[180px] justify-between h-auto min-h-[40px] items-center text-left font-normal",
+                    !filters.hairdresserIds.length && "text-muted-foreground"
+                  )}
+                >
+                  {filters.hairdresserIds.length ? (
+                    <div className="flex flex-wrap gap-1">
+                      {filters.hairdresserIds.map(id => {
+                        const hairdresser = hairdressers.find(h => h.id === id);
+                        return (
+                          <Badge key={id} variant="secondary">
+                            {hairdresser?.first_name} {hairdresser?.last_name}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span>Wybierz fryzjerów</span>
+                  )}
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[250px] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Wyszukaj fryzjerów..." />
+                  <CommandList>
+                    <CommandEmpty>Nie znaleziono fryzjerów.</CommandEmpty>
+                    <CommandGroup>
+                      {hairdressers.map((hairdresser) => {
+                        const isSelected = filters.hairdresserIds.includes(hairdresser.id);
+                        return (
+                          <CommandItem
+                            key={hairdresser.id}
+                            onSelect={() => {
+                              const updatedIds = isSelected
+                                ? filters.hairdresserIds.filter(id => id !== hairdresser.id)
+                                : [...filters.hairdresserIds, hairdresser.id];
+                              
+                              setFilters(prev => ({ ...prev, hairdresserIds: updatedIds }));
+                            }}
+                          >
+                            <div className="flex items-center gap-2 w-full">
+                              <Checkbox checked={isSelected} />
+                              <span>{hairdresser.first_name} {hairdresser.last_name}</span>
+                            </div>
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-[180px] justify-start text-left font-normal",
-                    !filters.date && "text-muted-foreground"
+                    "w-[250px] justify-start text-left font-normal",
+                    !filters.dateRange && "text-muted-foreground"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.date ? format(filters.date, 'PPP') : <span>Wybierz datę</span>}
+                  {filters.dateRange?.from ? (
+                    filters.dateRange.to ? (
+                      <>
+                        {format(filters.dateRange.from, 'LLL dd, y')} -{' '}
+                        {format(filters.dateRange.to, 'LLL dd, y')}
+                      </>
+                    ) : (
+                      format(filters.dateRange.from, 'LLL dd, y')
+                    )
+                  ) : (
+                    <span>Wybierz zakres dat</span>
+                  )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
-                  mode="single"
-                  selected={filters.date}
-                  onSelect={(date) => setFilters(prev => ({ ...prev, date }))}
                   initialFocus
+                  mode="range"
+                  defaultMonth={filters.dateRange?.from}
+                  selected={filters.dateRange}
+                  onSelect={(dateRange) => setFilters(prev => ({ ...prev, dateRange }))}
+                  numberOfMonths={2}
                 />
               </PopoverContent>
             </Popover>
@@ -303,9 +457,10 @@ export function BookingsSection() {
                 variant="outline"
                 className="gap-2"
                 onClick={() => setFilters({
-                  status: 'all',
-                  date: undefined,
+                  statuses: [],
+                  dateRange: undefined,
                   search: '',
+                  hairdresserIds: [],
                 })}
               >
                 <XCircle className="h-4 w-4" />
