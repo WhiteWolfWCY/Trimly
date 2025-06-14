@@ -32,6 +32,11 @@ export async function createHairdresserWithRelations(data: HairdresserWithRelati
         first_name: data.hairdresser.first_name,
         last_name: data.hairdresser.last_name,
         phone_number: data.hairdresser.phone_number || null,
+        city: data.hairdresser.city || null,
+        postal_code: data.hairdresser.postal_code || null,
+        street: data.hairdresser.street || null,
+        house_number: data.hairdresser.house_number || null,
+        apartment_number: data.hairdresser.apartment_number || null,
         created_at: new Date(),
         updated_at: new Date(),
       })
@@ -79,6 +84,11 @@ export async function updateHairdresserWithRelations(id: number, data: Hairdress
         ...(data.hairdresser.first_name !== undefined && { first_name: data.hairdresser.first_name }),
         ...(data.hairdresser.last_name !== undefined && { last_name: data.hairdresser.last_name }),
         ...(data.hairdresser.phone_number !== undefined && { phone_number: data.hairdresser.phone_number }),
+        ...(data.hairdresser.city !== undefined && { city: data.hairdresser.city }),
+        ...(data.hairdresser.postal_code !== undefined && { postal_code: data.hairdresser.postal_code }),
+        ...(data.hairdresser.street !== undefined && { street: data.hairdresser.street }),
+        ...(data.hairdresser.house_number !== undefined && { house_number: data.hairdresser.house_number }),
+        ...(data.hairdresser.apartment_number !== undefined && { apartment_number: data.hairdresser.apartment_number }),
         updated_at: new Date()
       };
 

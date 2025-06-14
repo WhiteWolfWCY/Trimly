@@ -5,6 +5,11 @@ export type Hairdresser = {
   first_name: string;
   last_name: string;
   phone_number: string | null;
+  city: string | null;
+  postal_code: string | null;
+  street: string | null;
+  house_number: string | null;
+  apartment_number: string | null;
   created_at: Date;
   updated_at: Date | null;
 };
@@ -13,6 +18,11 @@ export type NewHairdresser = {
   first_name: string;
   last_name: string;
   phone_number?: string | null;
+  city?: string | null;
+  postal_code?: string | null;
+  street?: string | null;
+  house_number?: string | null;
+  apartment_number?: string | null;
   created_at?: Date;
   updated_at?: Date | null;
 };
@@ -22,6 +32,11 @@ export interface HairdresserWithRelations {
     first_name: string;
     last_name: string;
     phone_number?: string | null;
+    city?: string | null;
+    postal_code?: string | null;
+    street?: string | null;
+    house_number?: string | null;
+    apartment_number?: string | null;
   };
   availability: {
     dayOfWeek: DayOfWeek;
@@ -36,6 +51,11 @@ export interface HairdresserUpdateRelations {
     first_name?: string;
     last_name?: string;
     phone_number?: string | null;
+    city?: string | null;
+    postal_code?: string | null;
+    street?: string | null;
+    house_number?: string | null;
+    apartment_number?: string | null;
   };
   availability?: {
     dayOfWeek: DayOfWeek;
@@ -91,6 +111,11 @@ export interface FormattedHairdresserData {
     first_name: string;
     last_name: string;
     phone_number?: string;
+    city?: string;
+    postal_code?: string;
+    street?: string;
+    house_number?: string;
+    apartment_number?: string;
   };
   availability: {
     dayOfWeek: DayOfWeek;
@@ -120,6 +145,11 @@ export const hairdresserSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
     phone_number: z.string().optional(),
+    city: z.string().optional(),
+    postal_code: z.string().optional(),
+    street: z.string().optional(),
+    house_number: z.string().optional(),
+    apartment_number: z.string().optional(),
   }),
   availability: z.array(availabilitySchema)
     .min(1, "At least one availability slot is required"),

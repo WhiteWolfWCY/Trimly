@@ -6,6 +6,11 @@ export interface HairdresserFormProps {
       first_name: string;
       last_name: string;
       phone_number?: string | null;
+      city?: string | null;
+      postal_code?: string | null;
+      street?: string | null;
+      house_number?: string | null;
+      apartment_number?: string | null;
     };
     availability?: {
       dayOfWeek: string;

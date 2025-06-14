@@ -96,6 +96,11 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
       first_name: initialData?.hairdresser?.first_name || "",
       last_name: initialData?.hairdresser?.last_name || "",
       phone_number: initialData?.hairdresser?.phone_number || "",
+      city: initialData?.hairdresser?.city || "",
+      postal_code: initialData?.hairdresser?.postal_code || "",
+      street: initialData?.hairdresser?.street || "",
+      house_number: initialData?.hairdresser?.house_number || "",
+      apartment_number: initialData?.hairdresser?.apartment_number || "",
     },
     availability: initialData?.availability?.map(avail => ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -195,6 +200,83 @@ export function HairdresserForm({ initialData, onSubmit }: HairdresserFormProps)
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-base font-medium">Adres</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="hairdresser.city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Miasto (opcjonalnie)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Wpisz miasto" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="hairdresser.postal_code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="00-000" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="hairdresser.street"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ulica (opcjonalnie)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Wpisz nazwę ulicy" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="hairdresser.house_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Numer domu (opcjonalnie)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Numer domu" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="hairdresser.apartment_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Numer mieszkania (opcjonalnie)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Numer mieszkania" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="space-y-3">

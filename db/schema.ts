@@ -37,6 +37,11 @@ export const hairdressersTable = pgTable('hairdressers', {
   first_name: text('first_name').notNull(),
   last_name: text('last_name').notNull(),
   phone_number: text('phone_number'),
+  city: text('city'),
+  postal_code: text('postal_code'),
+  street: text('street'),
+  house_number: text('house_number'),
+  apartment_number: text('apartment_number'),
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at')
 });

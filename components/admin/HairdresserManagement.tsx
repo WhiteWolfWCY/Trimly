@@ -41,6 +41,7 @@ import { format } from "date-fns";
 import { Hairdresser, HairdresserDetails, FormattedHairdresserData } from "@/types/hairdresser";
 import { Service } from "@/types/service";
 import { HairdresserManagementProps } from "@/types/forms";
+import { MapPin } from "lucide-react";
 
 export function HairdresserManagement({ initialHairdressers = [] }: HairdresserManagementProps) {
   const router = useRouter();
@@ -349,6 +350,11 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
                   first_name: selectedHairdresser.first_name,
                   last_name: selectedHairdresser.last_name,
                   phone_number: selectedHairdresser.phone_number || "",
+                  city: selectedHairdresser.city || "",
+                  postal_code: selectedHairdresser.postal_code || "",
+                  street: selectedHairdresser.street || "",
+                  house_number: selectedHairdresser.house_number || "",
+                  apartment_number: selectedHairdresser.apartment_number || "",
                 },
                 availability: selectedHairdresser.availability,
                 services: selectedHairdresser.serviceIds,
@@ -378,6 +384,43 @@ export function HairdresserManagement({ initialHairdressers = [] }: HairdresserM
                     <p className="text-sm text-muted-foreground">Numer telefonu</p>
                     <p className="font-medium">{selectedHairdresser.phone_number || "—"}</p>
                   </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium mb-2 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Adres
+                </h3>
+                <div className="space-y-2">
+                  {(selectedHairdresser.city || 
+                    selectedHairdresser.postal_code || 
+                    selectedHairdresser.street || 
+                    selectedHairdresser.house_number || 
+                    selectedHairdresser.apartment_number) ? (
+                    <div className="grid grid-cols-1 gap-2">
+                      {selectedHairdresser.street && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground min-w-[80px]">Ulica:</span>
+                          <span className="font-medium">{selectedHairdresser.street} {selectedHairdresser.house_number}</span>
+                          {selectedHairdresser.apartment_number && (
+                            <span className="font-medium">/{selectedHairdresser.apartment_number}</span>
+                          )}
+                        </div>
+                      )}
+                      {(selectedHairdresser.postal_code || selectedHairdresser.city) && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground min-w-[80px]">Miasto:</span>
+                          <span className="font-medium">
+                            {selectedHairdresser.postal_code && `${selectedHairdresser.postal_code} `}
+                            {selectedHairdresser.city}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Brak danych adresowych</p>
+                  )}
                 </div>
               </div>
 
