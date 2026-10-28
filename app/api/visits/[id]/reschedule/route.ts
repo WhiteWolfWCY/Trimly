@@ -64,7 +64,7 @@ export async function PATCH(
       .returning();
 
     // Revalidate the visits cache
-    revalidateTag('visits');
+    revalidateTag('visits', 'max');
     
     return NextResponse.json(updatedVisit);
   } catch (error) {

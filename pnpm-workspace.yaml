@@ -1,0 +1,5 @@
+allowBuilds:
+  '@clerk/shared': true
+  '@tailwindcss/oxide': true
+  esbuild: true
+  unrs-resolver: true

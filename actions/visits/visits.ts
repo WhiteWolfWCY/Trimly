@@ -83,7 +83,7 @@ export async function cancelVisit(visitId: number, reason?: string) {
     console.error("Failed to remove visit from Google Calendar:", error);
   }
 
-  revalidateTag('visits');
+  revalidateTag('visits', 'max');
   
   return updatedVisit;
 }
@@ -158,7 +158,7 @@ export async function rescheduleVisit(
     console.error("Failed to update visit in Google Calendar:", error);
   }
 
-  revalidateTag('visits');
+  revalidateTag('visits', 'max');
   
   return updatedVisit;
 }

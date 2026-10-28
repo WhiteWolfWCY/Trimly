@@ -308,7 +308,7 @@ export async function createBooking(data: NewBooking) {
     console.error("Failed to add booking to Google Calendar:", error);
   }
 
-  revalidateTag('visits');
+  revalidateTag('visits', 'max');
   
   return booking;
 }

@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.12.12",
+    "@clerk/nextjs": "^6.39.8",
     "@hookform/resolvers": "^4.1.3",
     "@neondatabase/serverless": "^1.0.0",
     "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -35,7 +35,7 @@
     "framer-motion": "^12.6.2",
     "googleapis": "^149.0.0",
     "lucide-react": "^0.485.0",
-    "next": "15.2.4",
+    "next": "16.4.1",
     "next-themes": "^0.4.6",
     "postgres": "^3.4.5",
     "react": "^19.0.0",
@@ -56,11 +56,25 @@
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.30.6",
     "eslint": "^9",
-    "eslint-config-next": "15.2.4",
+    "eslint-config-next": "16.4.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
   "overrides": {
     "@radix-ui/react-focus-scope": "1.1.1"
+  },
+  "trustedDependencies": [
+    "@clerk/shared",
+    "@tailwindcss/oxide",
+    "unrs-resolver"
+  ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "@tailwindcss/oxide",
+      "unrs-resolver",
+      "esbuild",
+      "sharp"
+    ]
   }
 }

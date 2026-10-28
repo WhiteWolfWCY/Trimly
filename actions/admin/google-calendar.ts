@@ -76,7 +76,7 @@ export async function saveGoogleCalendarCredentials(code: string) {
         });
     }
 
-    revalidateTag('google-calendar');
+    revalidateTag('google-calendar', 'max');
     
     return { success: true };
   } catch (error) {
@@ -142,7 +142,7 @@ export async function disconnectGoogleCalendar() {
 
   try {
     await db.delete(googleCalendarCredentialsTable);
-    revalidateTag('google-calendar');
+    revalidateTag('google-calendar', 'max');
     
     return { success: true };
   } catch (error) {
